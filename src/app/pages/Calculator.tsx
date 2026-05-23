@@ -176,54 +176,25 @@ export function Calculator() {
         </div>
 
         {/* Turnkey Section */}
-        <section className="mt-12 md:mt-24">
-          <div className="text-center mb-12">
+        <section className="mt-12 md:mt-24 pb-20">
+          <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-serif mb-4 text-[#1A1A1A]">Строительство домов под ключ</h2>
             <div className="w-20 h-1 bg-[#B58B52] mx-auto mb-6"></div>
             <p className="text-[#1A1A1A]/60 max-w-2xl mx-auto">
-              Выберите готовое решение или оставьте заявку на индивидуальный расчет вашего будущего дома в Сочи.
+              Мы реализуем полный цикл строительства: от проектирования и подготовки участка до финишной отделки и благоустройства территории.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {turnkeyPackages.map((pkg, idx) => (
-              <div key={idx} className="bg-white p-8 md:p-10 border border-[#1A1A1A]/5 shadow-sm hover:shadow-xl transition-all duration-500 group flex flex-col">
-                <div className="mb-6">
-                  <pkg.icon className="w-12 h-12 text-[#B58B52] mb-4 group-hover:scale-110 transition-transform duration-500" />
-                  <h3 className="text-2xl font-serif mb-2">{pkg.title}</h3>
-                  <div className="text-xl text-[#B58B52] font-medium mb-6">{pkg.price}</div>
-                </div>
-                
-                <ul className="space-y-4 mb-10 flex-1">
-                  {pkg.features.map((feature, fidx) => (
-                    <li key={fidx} className="flex items-start gap-3 text-sm text-[#1A1A1A]/70">
-                      <div className="w-1.5 h-1.5 bg-[#B58B52] mt-1.5 flex-shrink-0" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                <Button 
-                  onClick={() => handleTurnkeyRequest(pkg.title)}
-                  variant="outline" 
-                  className="w-full py-4 text-xs uppercase tracking-widest group-hover:bg-[#1A1A1A] group-hover:text-white transition-colors"
-                >
-                  Оставить заявку
-                </Button>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 bg-[#1A1A1A] p-8 md:p-16 text-center text-white relative overflow-hidden">
+          <div className="bg-[#1A1A1A] p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#B58B52] opacity-5 -translate-y-1/2 translate-x-1/2 rounded-full" />
-            <h3 className="text-2xl md:text-3xl font-serif mb-6 relative z-10">Нужен индивидуальный расчет по вашему проекту?</h3>
-            <p className="text-white/60 mb-10 max-w-xl mx-auto relative z-10 text-sm md:text-base">
-              Пришлите нам свой проект или техническое задание, и наши инженеры подготовят детальную смету в течение 24 часов.
+            <h3 className="text-2xl md:text-4xl font-serif mb-6 relative z-10 uppercase tracking-widest">Индивидуальный расчет проекта</h3>
+            <p className="text-white/60 mb-10 max-w-xl mx-auto relative z-10 text-sm md:text-base leading-relaxed">
+              У вас уже есть готовый проект или техническое задание? Пришлите его нам, и наши инженеры подготовят детализированную смету с учетом всех особенностей вашего участка в Сочи.
             </p>
             <Button 
               onClick={() => handleTurnkeyRequest('Индивидуальный проект')}
               variant="primary" 
-              className="bg-[#B58B52] hover:bg-white hover:text-[#1A1A1A] transition-colors relative z-10 px-12 py-5"
+              className="bg-[#B58B52] hover:bg-white hover:text-[#1A1A1A] transition-colors relative z-10 px-12 py-5 text-sm uppercase tracking-[0.2em] font-bold"
             >
               Заказать расчет проекта
             </Button>
