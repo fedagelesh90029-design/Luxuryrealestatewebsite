@@ -54,14 +54,14 @@ export function Home() {
         </div>
 
         <div className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-12 text-center text-white">
-          <h1 className="mb-6 text-white uppercase">РАССЧИТАЙТЕ СТОИМОСТЬ ПРОЕКТА</h1>
-          <p className="text-xl mb-12 text-white/90 max-w-2xl mx-auto">
+          <h1 className="mb-6 text-white uppercase text-3xl md:text-5xl lg:text-7xl leading-tight">РАССЧИТАЙТЕ СТОИМОСТЬ ПРОЕКТА</h1>
+          <p className="text-base md:text-xl mb-10 text-white/90 max-w-2xl mx-auto px-4">
             Получите детальную смету от профессионального генерального подрядчика
           </p>
           <Link to="/calculator">
-            <Button variant="primary" className="bg-[#B58B52] hover:bg-[#3A5A40] text-[#1A1A1A]">
+            <Button variant="primary" className="bg-[#B58B52] hover:bg-[#3A5A40] text-[#1A1A1A] py-4 px-8 text-sm md:text-base">
               Собрать смету
-              <ArrowRight className="inline-block ml-2 w-5 h-5" />
+              <ArrowRight className="inline-block ml-2 w-4 h-4 md:w-5 md:h-5" />
             </Button>
           </Link>
         </div>
