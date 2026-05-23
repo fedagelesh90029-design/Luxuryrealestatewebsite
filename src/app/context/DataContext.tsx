@@ -88,32 +88,44 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const addService = async (service: Omit<WorkItem, 'id'>) => {
     const { error } = await supabase.from('services').insert([service]);
-    if (!error) fetchData();
+    if (error) {
+      alert('Ошибка при добавлении работы: ' + error.message);
+    } else {
+      fetchData();
+    }
   };
 
   const updateService = async (id: string, updatedFields: Partial<WorkItem>) => {
     const { error } = await supabase.from('services').update(updatedFields).eq('id', id);
-    if (!error) fetchData();
+    if (error) {
+      alert('Ошибка при обновлении: ' + error.message);
+    } else {
+      fetchData();
+    }
   };
 
   const deleteService = async (id: string) => {
     const { error } = await supabase.from('services').delete().eq('id', id);
-    if (!error) fetchData();
+    if (error) alert('Ошибка удаления: ' + error.message);
+    else fetchData();
   };
 
   const addProject = async (project: Omit<Project, 'id'>) => {
     const { error } = await supabase.from('portfolio').insert([project]);
-    if (!error) fetchData();
+    if (error) alert('Ошибка портфолио: ' + error.message);
+    else fetchData();
   };
 
   const updateProject = async (id: string, updatedFields: Partial<Project>) => {
     const { error } = await supabase.from('portfolio').update(updatedFields).eq('id', id);
-    if (!error) fetchData();
+    if (error) alert('Ошибка обновления проекта: ' + error.message);
+    else fetchData();
   };
 
   const deleteProject = async (id: string) => {
     const { error } = await supabase.from('portfolio').delete().eq('id', id);
-    if (!error) fetchData();
+    if (error) alert('Ошибка удаления проекта: ' + error.message);
+    else fetchData();
   };
 
   const addRequest = async (requestData: Omit<Request, 'id' | 'status' | 'date'>) => {
@@ -125,28 +137,33 @@ export function DataProvider({ children }: { children: ReactNode }) {
       items: requestData.items,
       status: 'new'
     }]);
-    if (!error) fetchData();
+    if (error) alert('Ошибка отправки заявки: ' + error.message);
+    else fetchData();
   };
 
   const updateRequestStatus = async (id: string, status: Request['status']) => {
     const { error } = await supabase.from('requests').update({ status }).eq('id', id);
-    if (!error) fetchData();
+    if (error) alert('Ошибка статуса: ' + error.message);
+    else fetchData();
   };
 
   const deleteRequest = async (id: string) => {
     const { error } = await supabase.from('requests').delete().eq('id', id);
-    if (!error) fetchData();
+    if (error) alert('Ошибка удаления заявки: ' + error.message);
+    else fetchData();
   };
 
   const addCategory = async (categoryData: Omit<Category, 'id' | 'slug'>) => {
     const slug = categoryData.name.toLowerCase().replace(/\s+/g, '-');
     const { error } = await supabase.from('categories').insert([{ ...categoryData, slug }]);
-    if (!error) fetchData();
+    if (error) alert('Ошибка категории: ' + error.message);
+    else fetchData();
   };
 
   const deleteCategory = async (id: string) => {
     const { error } = await supabase.from('categories').delete().eq('id', id);
-    if (!error) fetchData();
+    if (error) alert('Ошибка удаления категории: ' + error.message);
+    else fetchData();
   };
 
   return (
