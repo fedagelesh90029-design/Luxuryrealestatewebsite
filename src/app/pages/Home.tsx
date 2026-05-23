@@ -2,66 +2,41 @@ import { Link } from 'react-router';
 import { ArrowRight, Building2, Ruler, Users, Award } from 'lucide-react';
 import { Button } from '../components/Button';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { useData } from '../context/DataContext';
 
 export function Home() {
-  const stats = [
-    { value: '120+', label: 'Реализованных проектов' },
-    { value: '15', label: 'Лет на рынке' },
-    { value: '98%', label: 'Довольных клиентов' },
-    { value: '50+', label: 'Специалистов в команде' },
-  ];
+  const { projects: allProjects } = useData();
+  
+  // Get first 4 projects for homepage
+  const projects = allProjects.slice(0, 4);
 
-  const projects = [
-    {
-      id: 1,
-      title: 'Жилой комплекс "Резиденция"',
-      location: 'Москва',
-      area: '12 000 м²',
-      image: 'https://images.unsplash.com/photo-1775733923991-e7223f9f44bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBtb2Rlcm4lMjBhcmNoaXRlY3R1cmUlMjBleHRlcmlvciUyMGNvbmNyZXRlfGVufDF8fHx8MTc3NjIzOTA4Nnww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      id: 2,
-      title: 'Офисное здание "Квартал"',
-      location: 'Санкт-Петербург',
-      area: '8 500 м²',
-      image: 'https://images.unsplash.com/photo-1767336470847-dd0b77398367?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbGVnYW50JTIwcmVzaWRlbnRpYWwlMjBidWlsZGluZyUyMGZhY2FkZXxlbnwxfHx8fDE3NzYyMzkwODd8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      id: 3,
-      title: 'Загородный дом "Panorama"',
-      location: 'Подмосковье',
-      area: '450 м²',
-      image: 'https://images.unsplash.com/photo-1758184432345-3a433cf2c421?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb250ZW1wb3JhcnklMjByZXNpZGVudGlhbCUyMGRldmVsb3BtZW50fGVufDF8fHx8MTc3NjIzOTA4OHww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      id: 4,
-      title: 'Торговый центр "Метрополис"',
-      location: 'Казань',
-      area: '25 000 м²',
-      image: 'https://images.unsplash.com/photo-1655794387399-6dd29236eaa1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjBidWlsZGluZyUyMGFyY2hpdGVjdHVyYWwlMjBkZXRhaWx8ZW58MXx8fHwxNzc2MjM5MDg4fDA&ixlib=rb-4.1.0&q=80&w=1080',
-    },
+  const stats = [
+    { value: '50+', label: 'Успешных проектов' },
+    { value: '100%', label: 'Качество по ГОСТ' },
+    { value: '24/7', label: 'Поддержка клиентов' },
+    { value: '100%', label: 'Прозрачная стройка' },
   ];
 
   const services = [
     {
       icon: Building2,
-      title: 'Фундаментные работы',
-      description: 'Устройство надежного основания любой сложности',
+      title: 'Фундамент и стены',
+      description: 'Строим надежный каркас вашего будущего дома с соблюдением всех технологических норм',
     },
     {
       icon: Ruler,
-      title: 'Возведение стен',
-      description: 'Кирпич, газобетон, монолитные конструкции',
+      title: 'Проектирование',
+      description: 'Индивидуальные архитектурные решения, адаптированные под ландшафт Сочи',
     },
     {
       icon: Users,
-      title: 'Отделочные работы',
-      description: 'Внутренняя и внешняя отделка под ключ',
+      title: 'Отделка под ключ',
+      description: 'Создаем уютные интерьеры: от черновых работ до финального декора',
     },
     {
       icon: Award,
-      title: 'Инженерные системы',
-      description: 'Полный комплекс инженерного обеспечения',
+      title: 'Гарантия качества',
+      description: 'Несем полную ответственность за каждый этап строительства и используемые материалы',
     },
   ];
 
@@ -71,7 +46,7 @@ export function Home() {
       <section className="relative h-[85vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1775733923991-e7223f9f44bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBtb2Rlcm4lMjBhcmNoaXRlY3R1cmUlMjBleHRlcmlvciUyMGNvbmNyZXRlfGVufDF8fHx8MTc3NjIzOTA4Nnww&ixlib=rb-4.1.0&q=80&w=1080"
+            src="/images/hero.jpg"
             alt="Архитектура"
             className="w-full h-full object-cover"
           />
@@ -79,7 +54,7 @@ export function Home() {
         </div>
 
         <div className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-12 text-center text-white">
-          <h1 className="mb-6 text-white">РАССЧИТАЙТЕ СТОИМОСТЬ ПРОЕКТА</h1>
+          <h1 className="mb-6 text-white uppercase">РАССЧИТАЙТЕ СТОИМОСТЬ ПРОЕКТА</h1>
           <p className="text-xl mb-12 text-white/90 max-w-2xl mx-auto">
             Получите детальную смету от профессионального генерального подрядчика
           </p>
@@ -157,14 +132,14 @@ export function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-[#3A5A40] text-white">
+      <section className="py-24 bg-[#2C2C2C] text-white">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12 text-center">
           <h2 className="mb-6 text-white">Начните свой проект сегодня</h2>
           <p className="text-xl mb-12 text-white/90 max-w-2xl mx-auto">
             Воспользуйтесь нашим калькулятором для получения предварительной сметы
           </p>
           <Link to="/calculator">
-            <Button variant="primary" className="bg-[#B58B52] hover:bg-[#1A1A1A] text-[#1A1A1A]">
+            <Button variant="primary" className="bg-[#B58B52] hover:bg-[#3A5A40] text-[#1A1A1A]">
               Рассчитать смету
             </Button>
           </Link>

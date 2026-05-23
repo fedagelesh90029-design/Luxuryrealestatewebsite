@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { Search, Plus, Minus, X } from 'lucide-react';
-import { categories, workItems } from '../data/workItems';
+import { useData } from '../context/DataContext';
 import { useEstimate } from '../context/EstimateContext';
 import { Button } from '../components/Button';
 import { SubmitModal } from '../components/SubmitModal';
 
 export function Calculator() {
+  const { services, categories } = useData();
   const [activeCategory, setActiveCategory] = useState(categories[0].slug);
   const [searchQuery, setSearchQuery] = useState('');
   const [localQuantities, setLocalQuantities] = useState<Record<string, number>>({});
   const [showModal, setShowModal] = useState(false);
   const { items, addItem, removeItem, updateQuantity, clearAll } = useEstimate();
 
-  const filteredItems = workItems.filter(item => {
+  const filteredItems = services.filter(item => {
     const matchesCategory = item.category === activeCategory;
     const matchesSearch = searchQuery === '' || 
       item.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -21,7 +22,7 @@ export function Calculator() {
 
   const handleAddToEstimate = (itemId: string) => {
     const quantity = localQuantities[itemId] || 1;
-    const workItem = workItems.find(item => item.id === itemId);
+    const workItem = services.find(item => item.id === itemId);
     if (workItem) {
       addItem(workItem, quantity);
       setLocalQuantities(prev => ({ ...prev, [itemId]: 1 }));

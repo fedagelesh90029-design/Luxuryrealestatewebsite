@@ -24,6 +24,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    port: 3000,
+    host: true,
+  },
   resolve: {
     alias: {
       // Alias @ to the src directory

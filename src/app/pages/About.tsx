@@ -1,45 +1,23 @@
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { siteConfig } from '../data/siteConfig';
 
 export function About() {
-  const team = [
-    {
-      name: 'Александр Петров',
-      position: 'Генеральный директор',
-      image: 'https://images.unsplash.com/photo-1749793716288-a5ab5ed3b0e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzc21hbiUyMHBvcnRyYWl0JTIwc3R1ZGlvfGVufDF8fHx8MTc3NjIwMTU2MXww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      name: 'Елена Соколова',
-      position: 'Главный архитектор',
-      image: 'https://images.unsplash.com/photo-1749793716288-a5ab5ed3b0e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzc21hbiUyMHBvcnRyYWl0JTIwc3R1ZGlvfGVufDF8fHx8MTc3NjIwMTU2MXww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      name: 'Дмитрий Волков',
-      position: 'Технический директор',
-      image: 'https://images.unsplash.com/photo-1749793716288-a5ab5ed3b0e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzc21hbiUyMHBvcnRyYWl0JTIwc3R1ZGlvfGVufDF8fHx8MTc3NjIwMTU2MXww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      name: 'Мария Кузнецова',
-      position: 'Руководитель проектов',
-      image: 'https://images.unsplash.com/photo-1749793716288-a5ab5ed3b0e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzc21hbiUyMHBvcnRyYWl0JTIwc3R1ZGlvfGVufDF8fHx8MTc3NjIwMTU2MXww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-  ];
-
   const values = [
     {
-      title: 'Качество',
-      description: 'Используем только проверенные материалы и технологии строительства',
+      title: 'Надежность',
+      description: 'Строим как для себя. Каждый узел и каждый шов проходят строгий технический контроль.',
     },
     {
       title: 'Сроки',
-      description: 'Соблюдаем договорные сроки благодаря четкому планированию',
+      description: 'Мы ценим ваше время. Четкое планирование позволяет нам сдавать объекты точно в срок.',
     },
     {
       title: 'Прозрачность',
-      description: 'Полная отчетность на каждом этапе реализации проекта',
+      description: 'Честные сметы без скрытых платежей. Вы всегда знаете, за что платите.',
     },
     {
       title: 'Гарантия',
-      description: 'Предоставляем расширенную гарантию на все виды работ',
+      description: 'Несем полную ответственность за результат. Гарантия на все виды работ по договору.',
     },
   ];
 
@@ -49,92 +27,76 @@ export function About() {
       <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1646809669486-10fea26c5f28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwaW50ZXJpb3IlMjBjb25zdHJ1Y3Rpb24lMjB3b3Jrc3BhY2V8ZW58MXx8fHwxNzc2MjM5MDg4fDA&ixlib=rb-4.1.0&q=80&w=1080"
+            src="/images/about_hero.jpg"
             alt="О компании"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-[#1A1A1A]/50" />
         </div>
         <div className="relative z-10 text-center text-white">
-          <h1 className="text-white">О компании</h1>
+          <h1 className="text-white uppercase">О КОМПАНИИ</h1>
         </div>
       </section>
 
       {/* Story */}
       <section className="py-24">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="mb-6">15 лет строительного опыта</h2>
-              <p className="mb-6 text-[#1A1A1A]/70 leading-relaxed">
-                АРХИТЕКТОР — ведущая строительная компания полного цикла, специализирующаяся на
-                возведении жилых, коммерческих и промышленных объектов.
-              </p>
-              <p className="mb-6 text-[#1A1A1A]/70 leading-relaxed">
-                Мы предлагаем комплексный подход к реализации проектов: от разработки проектно-сметной
-                документации до сдачи объекта заказчику под ключ.
-              </p>
-              <p className="text-[#1A1A1A]/70 leading-relaxed">
-                За годы работы мы реализовали более 120 проектов различной сложности, заслужив репутацию
-                надежного партнера и профессионального подрядчика.
-              </p>
-            </div>
-            <div>
-              <h2 className="mb-6">Наши ценности</h2>
-              <div className="space-y-6">
-                {values.map((value, index) => (
-                  <div key={index} className="border-l-2 border-[#B58B52] pl-6">
-                    <h4 className="mb-2">{value.title}</h4>
-                    <p className="text-sm text-[#1A1A1A]/70">{value.description}</p>
-                  </div>
-                ))}
+              <h2 className="mb-8 font-serif">{siteConfig.name}: Качество, проверенное делом</h2>
+              <div className="space-y-6 text-[#1A1A1A]/70 leading-relaxed text-lg">
+                <p>
+                  Мы — команда профессионалов, объединенных одной целью: строить дома, которые станут крепостью для нескольких поколений. Наш подход основан на исключении «халтуры» и строгом соблюдении строительных норм.
+                </p>
+                <p>
+                  В условиях Сочи строительство требует особого внимания к грунтам и сейсмике. Мы специализируемся на возведении сложных фундаментов и монолитных каркасов, адаптированных под местный ландшафт.
+                </p>
+                <p>
+                  Для нас строительство — это не просто бизнес, это искусство создания пространства для жизни. Мы берем на себя все хлопоты: от детального расчета сметы до финишной отделки.
+                </p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section className="py-24 bg-white">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <h2 className="mb-16 text-center">Наша команда</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, index) => (
-              <div key={index} className="text-center">
-                <div className="mb-6 overflow-hidden">
-                  <ImageWithFallback
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full aspect-square object-cover grayscale hover:grayscale-0 transition-all duration-500"
-                  />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <ImageWithFallback 
+                  src="/images/project3.jpg" 
+                  className="w-full aspect-[3/4] object-cover"
+                />
+                <div className="bg-[#B58B52] p-8 text-[#1A1A1A]">
+                  <div className="text-4xl font-serif mb-2">50+</div>
+                  <div className="text-sm uppercase tracking-wider font-bold">Проектов</div>
                 </div>
-                <h4 className="mb-2">{member.name}</h4>
-                <p className="text-sm text-[#1A1A1A]/60">{member.position}</p>
               </div>
-            ))}
+              <div className="space-y-4 pt-12">
+                <div className="bg-[#1A1A1A] p-8 text-white">
+                  <div className="text-4xl font-serif mb-2">100%</div>
+                  <div className="text-sm uppercase tracking-wider font-bold">Гарантия</div>
+                </div>
+                <ImageWithFallback 
+                  src="/images/project4.jpg" 
+                  className="w-full aspect-[3/4] object-cover"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-24 bg-[#1A1A1A] text-[#F5F5F0]">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-            <div>
-              <div className="text-5xl font-serif mb-3 text-[#B58B52]">120+</div>
-              <div className="text-sm text-[#F5F5F0]/70">Реализованных проектов</div>
-            </div>
-            <div>
-              <div className="text-5xl font-serif mb-3 text-[#B58B52]">15</div>
-              <div className="text-sm text-[#F5F5F0]/70">Лет на рынке</div>
-            </div>
-            <div>
-              <div className="text-5xl font-serif mb-3 text-[#B58B52]">98%</div>
-              <div className="text-sm text-[#F5F5F0]/70">Довольных клиентов</div>
-            </div>
-            <div>
-              <div className="text-5xl font-serif mb-3 text-[#B58B52]">50+</div>
-              <div className="text-sm text-[#F5F5F0]/70">Специалистов</div>
+      {/* Philosophy Section */}
+      <section className="py-24 bg-[#1A1A1A] text-white overflow-hidden">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 relative">
+          <div className="absolute top-0 right-0 opacity-10 text-[200px] font-serif select-none pointer-events-none -translate-y-1/4 translate-x-1/4">
+            {siteConfig.shortName}
+          </div>
+          <div className="max-w-3xl">
+            <h2 className="mb-12 text-white border-l-4 border-[#B58B52] pl-8">Почему выбирают нас?</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              {values.map((value, index) => (
+                <div key={index}>
+                  <h4 className="text-[#B58B52] mb-4 text-xl font-serif">{value.title}</h4>
+                  <p className="text-white/60 leading-relaxed">{value.description}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

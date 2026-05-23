@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { Button } from '../components/Button';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { siteConfig } from '../data/siteConfig';
 
 export function Contacts() {
   const [formData, setFormData] = useState({
@@ -35,13 +36,19 @@ export function Contacts() {
     }, 3000);
   };
 
+  const mapAddress = encodeURIComponent(siteConfig.contact.fullAddress);
+  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=REPLACE_WITH_REAL_KEY&q=${mapAddress}`;
+  
+  // Using a cleaner iframe approach with direct search URL as fallback/standard
+  const simpleMapUrl = `https://maps.google.com/maps?q=${mapAddress}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+
   return (
     <div className="min-h-screen bg-[#F5F5F0]">
       {/* Hero */}
       <section className="relative h-[40vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1655794387399-6dd29236eaa1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjBidWlsZGluZyUyMGFyY2hpdGVjdHVyYWwlMjBkZXRhaWx8ZW58MXx8fHwxNzc2MjM5MDg4fDA&ixlib=rb-4.1.0&q=80&w=1080"
+            src="/images/contacts_hero.jpg"
             alt="Контакты"
             className="w-full h-full object-cover"
           />
@@ -67,8 +74,8 @@ export function Contacts() {
                   </div>
                   <div>
                     <h4 className="mb-2">Телефон</h4>
-                    <a href="tel:+74951234567" className="text-[#1A1A1A]/70 hover:text-[#B58B52] transition-colors">
-                      +7 (495) 123-45-67
+                    <a href={`tel:${siteConfig.contact.phoneRaw}`} className="text-[#1A1A1A]/70 hover:text-[#B58B52] transition-colors">
+                      {siteConfig.contact.phone}
                     </a>
                   </div>
                 </div>
@@ -79,8 +86,8 @@ export function Contacts() {
                   </div>
                   <div>
                     <h4 className="mb-2">Email</h4>
-                    <a href="mailto:info@architect.ru" className="text-[#1A1A1A]/70 hover:text-[#B58B52] transition-colors">
-                      info@architect.ru
+                    <a href={`mailto:${siteConfig.contact.email}`} className="text-[#1A1A1A]/70 hover:text-[#B58B52] transition-colors">
+                      {siteConfig.contact.email}
                     </a>
                   </div>
                 </div>
@@ -92,8 +99,7 @@ export function Contacts() {
                   <div>
                     <h4 className="mb-2">Адрес</h4>
                     <p className="text-[#1A1A1A]/70">
-                      119991, Москва<br />
-                      ул. Архитекторов, д. 15, офис 301
+                      {siteConfig.contact.fullAddress}
                     </p>
                   </div>
                 </div>
@@ -105,16 +111,25 @@ export function Contacts() {
                   <div>
                     <h4 className="mb-2">Режим работы</h4>
                     <p className="text-[#1A1A1A]/70">
-                      Пн-Пт: 9:00 - 18:00<br />
-                      Сб-Вс: Выходной
+                      {siteConfig.contact.workHours}<br />
+                      {siteConfig.contact.workHoursWeekend}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Map Placeholder */}
-              <div className="aspect-video bg-[#E0E0DB] flex items-center justify-center">
-                <p className="text-[#1A1A1A]/40">Карта</p>
+              {/* Map */}
+              <div className="aspect-video bg-[#E0E0DB] border border-[#1A1A1A]/10 overflow-hidden">
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  frameBorder="0" 
+                  scrolling="no" 
+                  marginHeight={0} 
+                  marginWidth={0} 
+                  src={simpleMapUrl}
+                  title="Карта проезда"
+                />
               </div>
             </div>
 
@@ -136,7 +151,7 @@ export function Contacts() {
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3 border border-[#1A1A1A]/20 focus:border-[#B58B52] focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 border border-[#1A1A1A]/20 focus:border-[#B58B52] focus:outline-none transition-colors text-[#1A1A1A]"
                         placeholder="Иван Петров"
                       />
                     </div>
@@ -148,7 +163,7 @@ export function Contacts() {
                         required
                         value={formData.phone}
                         onChange={handlePhoneChange}
-                        className="w-full px-4 py-3 border border-[#1A1A1A]/20 focus:border-[#B58B52] focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 border border-[#1A1A1A]/20 focus:border-[#B58B52] focus:outline-none transition-colors text-[#1A1A1A]"
                         placeholder="+7 (___) ___-__-__"
                       />
                     </div>
@@ -160,7 +175,7 @@ export function Contacts() {
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                         rows={6}
-                        className="w-full px-4 py-3 border border-[#1A1A1A]/20 focus:border-[#B58B52] focus:outline-none transition-colors resize-none"
+                        className="w-full px-4 py-3 border border-[#1A1A1A]/20 focus:border-[#B58B52] focus:outline-none transition-colors resize-none text-[#1A1A1A]"
                         placeholder="Расскажите о вашем проекте..."
                       />
                     </div>

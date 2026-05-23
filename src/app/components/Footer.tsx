@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { Phone, Mail, MapPin } from 'lucide-react';
+import { siteConfig } from '../data/siteConfig';
 
 export function Footer() {
   return (
@@ -10,9 +11,9 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-[#B58B52] flex items-center justify-center">
-                <span className="font-serif text-xl text-[#1A1A1A]">АР</span>
+                <span className="font-serif text-xl text-[#1A1A1A]">{siteConfig.shortName}</span>
               </div>
-              <span className="font-serif text-xl">АРХИТЕКТОР</span>
+              <span className="font-serif text-xl">{siteConfig.name}</span>
             </div>
             <p className="text-sm text-[#F5F5F0]/70 leading-relaxed">
               Генеральный подрядчик полного цикла. Реализация проектов любой сложности.
@@ -55,17 +56,17 @@ export function Footer() {
           <div>
             <h4 className="mb-6 text-[#B58B52] font-serif">Контакты</h4>
             <div className="space-y-4">
-              <a href="tel:+74951234567" className="flex items-start gap-3 text-sm text-[#F5F5F0]/70 hover:text-[#B58B52] transition-colors">
+              <a href={`tel:${siteConfig.contact.phoneRaw}`} className="flex items-start gap-3 text-sm text-[#F5F5F0]/70 hover:text-[#B58B52] transition-colors">
                 <Phone className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <span>+7 (495) 123-45-67</span>
+                <span>{siteConfig.contact.phone}</span>
               </a>
-              <a href="mailto:info@architect.ru" className="flex items-start gap-3 text-sm text-[#F5F5F0]/70 hover:text-[#B58B52] transition-colors">
+              <a href={`mailto:${siteConfig.contact.email}`} className="flex items-start gap-3 text-sm text-[#F5F5F0]/70 hover:text-[#B58B52] transition-colors">
                 <Mail className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <span>info@architect.ru</span>
+                <span>{siteConfig.contact.email}</span>
               </a>
               <div className="flex items-start gap-3 text-sm text-[#F5F5F0]/70">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <span>Москва, ул. Архитекторов, 15</span>
+                <span>{siteConfig.contact.address}</span>
               </div>
             </div>
           </div>
@@ -73,7 +74,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-[#F5F5F0]/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[#F5F5F0]/50">
-            <p>© 2026 АРХИТЕКТОР. Все права защищены.</p>
+            <p>© {new Date().getFullYear()} {siteConfig.name}. Все права защищены.</p>
             <div className="flex gap-6">
               <Link to="/admin" className="hover:text-[#B58B52] transition-colors">
                 Админ-панель

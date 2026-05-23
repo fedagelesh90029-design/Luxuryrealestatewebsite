@@ -1,89 +1,68 @@
 import { useState } from 'react';
-import { LayoutDashboard, FileText, Package, FolderOpen, Plus, Pencil, Trash2, Download } from 'lucide-react';
-import { workItems, categories, WorkItem } from '../data/workItems';
+import { LayoutDashboard, FileText, Package, FolderOpen, Plus, Pencil, Trash2, Download, Image as ImageIcon, X, Check, Clock } from 'lucide-react';
+import { useData } from '../context/DataContext';
 import { Button } from '../components/Button';
+import { WorkItem, Category } from '../data/workItems';
+import { Project } from '../data/portfolioItems';
+import { siteConfig } from '../data/siteConfig';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 
-type View = 'requests' | 'works' | 'categories';
-
-interface Request {
-  id: string;
-  name: string;
-  phone: string;
-  comment: string;
-  status: 'new' | 'contacted' | 'completed';
-  date: string;
-  items: Array<{
-    name: string;
-    quantity: number;
-    unit: string;
-    price: number;
-    total: number;
-  }>;
-  grandTotal: number;
-}
+type View = 'requests' | 'works' | 'categories' | 'portfolio';
 
 export function Admin() {
+  const { 
+    services, 
+    categories, 
+    projects, 
+    requests, 
+    addService, 
+    updateService, 
+    deleteService, 
+    addProject, 
+    updateProject,
+    deleteProject,
+    updateRequestStatus,
+    deleteRequest,
+    addCategory,
+    deleteCategory
+  } = useData();
+  
   const [activeView, setActiveView] = useState<View>('requests');
+  const [showAddService, setShowAddService] = useState(false);
+  const [showAddProject, setShowAddProject] = useState(false);
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  
+  const [editingService, setEditingService] = useState<WorkItem | null>(null);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
 
-  // Mock requests data
-  const [requests] = useState<Request[]>([
-    {
-      id: '1',
-      name: 'Иван Петров',
-      phone: '+7 (495) 123-45-67',
-      comment: 'Фундаментные работы для коттеджа 200м²',
-      status: 'new',
-      date: '2026-04-15 10:30',
-      items: [
-        { name: 'Земляные работы', quantity: 80, unit: 'м³', price: 1200, total: 96000 },
-        { name: 'Монолитный ленточный фундамент', quantity: 20, unit: 'м³', price: 12500, total: 250000 },
-        { name: 'Гидроизоляция фундамента', quantity: 120, unit: 'м²', price: 450, total: 54000 },
-      ],
-      grandTotal: 400000,
-    },
-    {
-      id: '2',
-      name: 'Елена Соколова',
-      phone: '+7 (812) 987-65-43',
-      comment: 'Полная смета на загородный дом',
-      status: 'contacted',
-      date: '2026-04-14 15:45',
-      items: [
-        { name: 'Земляные работы', quantity: 120, unit: 'м³', price: 1200, total: 144000 },
-        { name: 'Кладка стен из газобетона', quantity: 45, unit: 'м³', price: 4200, total: 189000 },
-        { name: 'Стропильная система', quantity: 180, unit: 'м²', price: 1800, total: 324000 },
-      ],
-      grandTotal: 657000,
-    },
-    {
-      id: '3',
-      name: 'Дмитрий Волков',
-      phone: '+7 (495) 555-12-34',
-      comment: 'Отделочные работы офиса',
-      status: 'completed',
-      date: '2026-04-13 09:15',
-      items: [
-        { name: 'Штукатурка стен', quantity: 250, unit: 'м²', price: 480, total: 120000 },
-        { name: 'Укладка керамогранита', quantity: 80, unit: 'м²', price: 1200, total: 96000 },
-      ],
-      grandTotal: 216000,
-    },
-  ]);
+  // Form states
+  const [newService, setNewService] = useState<Omit<WorkItem, 'id'>>({
+    name: '',
+    unit: 'м²',
+    price: 0,
+    category: categories[0]?.slug || '',
+    isActive: true,
+    description: ''
+  });
+
+  const [newProject, setNewProject] = useState<Omit<Project, 'id'>>({
+    title: '',
+    category: 'residential',
+    location: '',
+    area: '',
+    year: new Date().getFullYear().toString(),
+    image: '',
+    description: ''
+  });
+
+  const [newCatName, setNewCatName] = useState('');
 
   const menuItems = [
     { id: 'requests' as View, label: 'Заявки', icon: FileText },
     { id: 'works' as View, label: 'Работы', icon: Package },
+    { id: 'portfolio' as View, label: 'Портфолио', icon: ImageIcon },
     { id: 'categories' as View, label: 'Категории', icon: FolderOpen },
   ];
-
-  const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
-      new: 'Новая',
-      contacted: 'Связались',
-      completed: 'Завершена',
-    };
-    return labels[status] || status;
-  };
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
@@ -94,16 +73,87 @@ export function Admin() {
     return colors[status] || '';
   };
 
+  const handleAddService = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingService) {
+      updateService(editingService.id, newService);
+      setEditingService(null);
+    } else {
+      addService(newService);
+    }
+    setShowAddService(false);
+    setNewService({ name: '', unit: 'м²', price: 0, category: categories[0]?.slug || '', isActive: true, description: '' });
+  };
+
+  const handleEditService = (service: WorkItem) => {
+    setEditingService(service);
+    setNewService({
+      name: service.name,
+      unit: service.unit,
+      price: service.price,
+      category: service.category,
+      isActive: service.isActive,
+      description: service.description || ''
+    });
+    setShowAddService(true);
+  };
+
+  const handleAddProject = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingProject) {
+      updateProject(editingProject.id, newProject);
+      setEditingProject(null);
+    } else {
+      addProject(newProject);
+    }
+    setShowAddProject(false);
+    setNewProject({ title: '', category: 'residential', location: '', area: '', year: '2026', image: '', description: '' });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewProject(prev => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleEditProject = (project: Project) => {
+    setEditingProject(project);
+    setNewProject({
+      title: project.title,
+      category: project.category,
+      location: project.location,
+      area: project.area,
+      year: project.year,
+      image: project.image,
+      description: project.description
+    });
+    setShowAddProject(true);
+  };
+
+  const handleAddCategory = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newCatName.trim()) {
+      addCategory({ name: newCatName.trim() });
+      setNewCatName('');
+      setShowAddCategory(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#F5F5F0] flex">
+    <div className="min-h-screen bg-[#F5F5F0] flex text-[#1A1A1A]">
       {/* Sidebar */}
       <aside className="w-64 bg-[#1A1A1A] text-[#F5F5F0] p-6 flex flex-col">
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 bg-[#B58B52] flex items-center justify-center">
-              <span className="font-serif text-xl text-[#1A1A1A]">АР</span>
+              <span className="font-serif text-xl text-[#1A1A1A]">{siteConfig.shortName}</span>
             </div>
-            <span className="font-serif text-xl">АРХИТЕКТОР</span>
+            <span className="font-serif text-xl">{siteConfig.name}</span>
           </div>
           <p className="text-xs text-[#F5F5F0]/50">Панель управления</p>
         </div>
@@ -136,76 +186,83 @@ export function Admin() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-8 overflow-y-auto max-h-screen">
         {/* Requests View */}
         {activeView === 'requests' && (
           <div>
             <div className="flex items-center justify-between mb-8">
               <h2>Заявки на расчет</h2>
-              <Button variant="outline" className="flex items-center gap-2">
-                <Download className="w-4 h-4" />
-                Экспорт в Excel
-              </Button>
+              <div className="text-sm opacity-50">{requests.length} заявок всего</div>
             </div>
 
             <div className="space-y-6">
-              {requests.map(request => (
-                <div key={request.id} className="bg-white p-6 border-l-4 border-[#B58B52]">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="mb-2">{request.name}</h3>
-                      <div className="flex items-center gap-4 text-sm text-[#1A1A1A]/60">
-                        <span>{request.phone}</span>
-                        <span>•</span>
-                        <span>{request.date}</span>
+              {requests.length === 0 ? (
+                <div className="bg-white p-12 text-center text-[#1A1A1A]/40 border-2 border-dashed">
+                  Заявок пока нет
+                </div>
+              ) : (
+                requests.map(request => (
+                  <div key={request.id} className="bg-white p-6 border-l-4 border-[#B58B52] shadow-sm relative group text-[#1A1A1A]">
+                    <button 
+                      onClick={() => deleteRequest(request.id)}
+                      className="absolute top-4 right-4 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+
+                    <div className="flex items-start justify-between mb-6">
+                      <div>
+                        <h3 className="text-xl mb-1">{request.name}</h3>
+                        <div className="flex items-center gap-4 text-sm text-[#1A1A1A]/60">
+                          <span className="font-medium text-[#1A1A1A]">{request.phone}</span>
+                          <span>•</span>
+                          <span>{request.date}</span>
+                        </div>
                       </div>
+                      <select 
+                        value={request.status}
+                        onChange={(e) => updateRequestStatus(request.id, e.target.value as any)}
+                        className={`text-xs px-3 py-1 border-none focus:outline-none ${getStatusColor(request.status)}`}
+                      >
+                        <option value="new">Новая</option>
+                        <option value="contacted">Связались</option>
+                        <option value="completed">Завершена</option>
+                      </select>
                     </div>
-                    <span className={`px-4 py-1 text-sm ${getStatusColor(request.status)}`}>
-                      {getStatusLabel(request.status)}
-                    </span>
-                  </div>
 
-                  <div className="mb-4 p-4 bg-[#F5F5F0]">
-                    <p className="text-sm text-[#1A1A1A]/70">{request.comment}</p>
-                  </div>
+                    <div className="mb-6 p-4 bg-[#F5F5F0] border-l-2 border-[#1A1A1A]/10 italic text-sm">
+                      {request.comment}
+                    </div>
 
-                  {/* Items Table */}
-                  <div className="overflow-x-auto mb-4">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-xs">
                       <thead>
-                        <tr className="border-b border-[#1A1A1A]/10">
-                          <th className="text-left py-3 px-2">Работа</th>
-                          <th className="text-right py-3 px-2">Количество</th>
-                          <th className="text-right py-3 px-2">Ед. изм.</th>
-                          <th className="text-right py-3 px-2">Цена</th>
-                          <th className="text-right py-3 px-2">Сумма</th>
+                        <tr className="border-b border-[#1A1A1A]/10 opacity-40 uppercase tracking-widest text-left">
+                          <th className="py-3">Работа</th>
+                          <th className="text-right py-3">Кол-во</th>
+                          <th className="text-right py-3">Цена</th>
+                          <th className="text-right py-3">Сумма</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="divide-y divide-[#1A1A1A]/5">
                         {request.items.map((item, idx) => (
-                          <tr key={idx} className="border-b border-[#1A1A1A]/5">
-                            <td className="py-3 px-2">{item.name}</td>
-                            <td className="text-right py-3 px-2">{item.quantity}</td>
-                            <td className="text-right py-3 px-2">{item.unit}</td>
-                            <td className="text-right py-3 px-2">{item.price.toLocaleString()} ₽</td>
-                            <td className="text-right py-3 px-2">{item.total.toLocaleString()} ₽</td>
+                          <tr key={idx}>
+                            <td className="py-3 font-medium">{item.name}</td>
+                            <td className="text-right py-3 opacity-60">{item.quantity} {item.unit}</td>
+                            <td className="text-right py-3 opacity-60">{item.price.toLocaleString()} ₽</td>
+                            <td className="text-right py-3 font-bold">{item.total.toLocaleString()} ₽</td>
                           </tr>
                         ))}
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colSpan={4} className="text-right py-3 px-2">
-                            <strong>Итого:</strong>
-                          </td>
-                          <td className="text-right py-3 px-2">
-                            <strong>{request.grandTotal.toLocaleString()} ₽</strong>
-                          </td>
+                          <td colSpan={3} className="text-right py-4 font-serif text-sm uppercase">Итого:</td>
+                          <td className="text-right py-4 font-serif text-lg text-[#B58B52]">{request.grandTotal.toLocaleString()} ₽</td>
                         </tr>
                       </tfoot>
                     </table>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         )}
@@ -215,48 +272,43 @@ export function Admin() {
           <div>
             <div className="flex items-center justify-between mb-8">
               <h2>Справочник работ</h2>
-              <Button variant="primary" className="flex items-center gap-2">
+              <Button variant="primary" className="flex items-center gap-2" onClick={() => {
+                setEditingService(null);
+                setNewService({ name: '', unit: 'м²', price: 0, category: categories[0]?.slug || '', isActive: true, description: '' });
+                setShowAddService(true);
+              }}>
                 <Plus className="w-4 h-4" />
                 Добавить работу
               </Button>
             </div>
 
-            <div className="bg-white overflow-hidden">
+            <div className="bg-white overflow-hidden shadow-sm">
               <table className="w-full text-sm">
                 <thead className="bg-[#F5F5F0]">
                   <tr>
-                    <th className="text-left py-4 px-6">Название</th>
-                    <th className="text-left py-4 px-6">Категория</th>
-                    <th className="text-center py-4 px-6">Ед. изм.</th>
-                    <th className="text-right py-4 px-6">Цена</th>
-                    <th className="text-center py-4 px-6">Статус</th>
-                    <th className="text-center py-4 px-6">Действия</th>
+                    <th className="text-left py-4 px-6 uppercase tracking-widest text-[10px]">Название</th>
+                    <th className="text-left py-4 px-6 uppercase tracking-widest text-[10px]">Категория</th>
+                    <th className="text-center py-4 px-6 uppercase tracking-widest text-[10px]">Ед. изм.</th>
+                    <th className="text-right py-4 px-6 uppercase tracking-widest text-[10px]">Цена</th>
+                    <th className="text-center py-4 px-6 uppercase tracking-widest text-[10px]">Действия</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {workItems.map((item) => (
-                    <tr key={item.id} className="border-b border-[#1A1A1A]/5 hover:bg-[#F5F5F0]/50">
-                      <td className="py-4 px-6">{item.name}</td>
+                <tbody className="divide-y divide-[#1A1A1A]/5">
+                  {services.map((item) => (
+                    <tr key={item.id} className="hover:bg-[#F5F5F0]/50 transition-colors">
+                      <td className="py-4 px-6">
+                        <div className="font-medium">{item.name}</div>
+                        {item.description && <div className="text-[10px] opacity-40 line-clamp-1">{item.description}</div>}
+                      </td>
                       <td className="py-4 px-6 text-[#1A1A1A]/60">
                         {categories.find(c => c.slug === item.category)?.name}
                       </td>
                       <td className="text-center py-4 px-6">{item.unit}</td>
-                      <td className="text-right py-4 px-6">{item.price.toLocaleString()} ₽</td>
-                      <td className="text-center py-4 px-6">
-                        <span className={`px-3 py-1 text-xs ${
-                          item.isActive ? 'bg-[#3A5A40] text-white' : 'bg-[#1A1A1A]/20 text-[#1A1A1A]'
-                        }`}>
-                          {item.isActive ? 'Активна' : 'Неактивна'}
-                        </span>
-                      </td>
+                      <td className="text-right py-4 px-6 font-bold">{item.price.toLocaleString()} ₽</td>
                       <td className="py-4 px-6">
                         <div className="flex items-center justify-center gap-2">
-                          <button className="p-2 hover:bg-[#F5F5F0] transition-colors" title="Редактировать">
-                            <Pencil className="w-4 h-4" />
-                          </button>
-                          <button className="p-2 hover:bg-[#F5F5F0] transition-colors text-destructive" title="Удалить">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <button onClick={() => handleEditService(item)} className="p-2 hover:bg-[#F5F5F0] transition-colors"><Pencil className="w-4 h-4" /></button>
+                          <button onClick={() => deleteService(item.id)} className="p-2 hover:bg-[#F5F5F0] transition-colors text-red-600"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       </td>
                     </tr>
@@ -267,39 +319,70 @@ export function Admin() {
           </div>
         )}
 
+        {/* Portfolio View */}
+        {activeView === 'portfolio' && (
+          <div>
+            <div className="flex items-center justify-between mb-8">
+              <h2>Управление портфолио</h2>
+              <Button variant="primary" className="flex items-center gap-2" onClick={() => {
+                setEditingProject(null);
+                setNewProject({ title: '', category: 'residential', location: '', area: '', year: '2026', image: '', description: '' });
+                setShowAddProject(true);
+              }}>
+                <Plus className="w-4 h-4" />
+                Добавить проект
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projects.map(project => (
+                <div key={project.id} className="bg-white group overflow-hidden border border-[#1A1A1A]/10 shadow-sm">
+                  <div className="h-48 overflow-hidden relative cursor-pointer" onClick={() => handleEditProject(project)}>
+                    <ImageWithFallback src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-[#1A1A1A]/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                       <Pencil className="text-white w-6 h-6" />
+                    </div>
+                  </div>
+                  <div className="p-5 flex justify-between items-start">
+                    <div>
+                      <h3 className="text-lg mb-1">{project.title}</h3>
+                      <p className="text-xs uppercase tracking-widest text-[#B58B52]">{project.category} • {project.year}</p>
+                    </div>
+                    <button onClick={() => deleteProject(project.id)} className="text-red-600 p-2 hover:bg-[#F5F5F0] rounded-full transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Categories View */}
         {activeView === 'categories' && (
           <div>
             <div className="flex items-center justify-between mb-8">
               <h2>Категории работ</h2>
-              <Button variant="primary" className="flex items-center gap-2">
+              <Button variant="primary" className="flex items-center gap-2" onClick={() => setShowAddCategory(true)}>
                 <Plus className="w-4 h-4" />
-                Добавить категорию
+                Создать категорию
               </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {categories.map(category => {
-                const count = workItems.filter(item => item.category === category.slug && item.isActive).length;
+                const count = services.filter(item => item.category === category.slug).length;
                 return (
-                  <div key={category.id} className="bg-white p-6 border border-[#1A1A1A]/10">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="mb-2">{category.name}</h3>
-                        <p className="text-sm text-[#1A1A1A]/60">{count} работ</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button className="p-2 hover:bg-[#F5F5F0] transition-colors" title="Редактировать">
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button className="p-2 hover:bg-[#F5F5F0] transition-colors text-destructive" title="Удалить">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="text-xs text-[#1A1A1A]/40">
-                      Slug: {category.slug}
-                    </div>
+                  <div key={category.id} className="bg-white p-8 border-t-4 border-[#B58B52] shadow-sm relative group">
+                    <button 
+                      onClick={() => deleteCategory(category.id)}
+                      className="absolute top-4 right-4 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-[#F5F5F0]"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    <h3 className="mb-2 text-xl">{category.name}</h3>
+                    <p className="text-sm text-[#1A1A1A]/40 mb-6 uppercase tracking-widest">{count} работ привязано</p>
+                    <div className="text-[10px] text-[#1A1A1A]/20 font-mono">Slug: {category.slug}</div>
                   </div>
                 );
               })}
@@ -307,6 +390,117 @@ export function Admin() {
           </div>
         )}
       </main>
+
+      {/* Modals */}
+      {/* Service Modal */}
+      {showAddService && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1A1A1A]/80 p-4">
+          <div className="bg-white w-full max-w-md p-8 relative overflow-y-auto max-h-[90vh] text-[#1A1A1A]">
+            <button onClick={() => setShowAddService(false)} className="absolute top-4 right-4"><X /></button>
+            <h3 className="mb-6 font-serif">{editingService ? 'Редактировать работу' : 'Добавить работу'}</h3>
+            <form onSubmit={handleAddService} className="space-y-4">
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Название</label>
+                <input className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newService.name} onChange={e => setNewService({...newService, name: e.target.value})} required />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Ед. изм.</label>
+                  <input className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newService.unit} onChange={e => setNewService({...newService, unit: e.target.value})} required />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Цена</label>
+                  <input type="number" className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newService.price} onChange={e => setNewService({...newService, price: Number(e.target.value)})} required />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Категория</label>
+                <select className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none bg-white" value={newService.category} onChange={e => setNewService({...newService, category: e.target.value})}>
+                  {categories.map(c => <option key={c.id} value={c.slug}>{c.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Описание</label>
+                <textarea className="w-full border border-[#1A1A1A]/10 p-3 h-24 focus:border-[#B58B52] outline-none resize-none text-sm" value={newService.description} onChange={e => setNewService({...newService, description: e.target.value})} placeholder="Опишите услугу..." />
+              </div>
+              <Button type="submit" className="w-full py-4 uppercase tracking-widest text-[10px] font-bold">Сохранить</Button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Project Modal */}
+      {showAddProject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1A1A1A]/80 p-4">
+          <div className="bg-white w-full max-w-lg p-8 relative overflow-y-auto max-h-[90vh] text-[#1A1A1A]">
+            <button onClick={() => setShowAddProject(false)} className="absolute top-4 right-4"><X /></button>
+            <h3 className="mb-6 font-serif">{editingProject ? 'Редактировать проект' : 'Добавить проект'}</h3>
+            <form onSubmit={handleAddProject} className="space-y-4">
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Заголовок</label>
+                <input className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} required />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Категория</label>
+                  <select className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none bg-white" value={newProject.category} onChange={e => setNewProject({...newProject, category: e.target.value})}>
+                    <option value="residential">Жилые комплексы</option>
+                    <option value="commercial">Коммерческие</option>
+                    <option value="private">Частные дома</option>
+                    <option value="industrial">Промышленные</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Год</label>
+                  <input className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newProject.year} onChange={e => setNewProject({...newProject, year: e.target.value})} required />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Локация</label>
+                  <input className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newProject.location} onChange={e => setNewProject({...newProject, location: e.target.value})} required />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Площадь</label>
+                  <input className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newProject.area} onChange={e => setNewProject({...newProject, area: e.target.value})} required />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Фото проекта</label>
+                  <input type="file" accept="image/*" onChange={handleFileChange} className="w-full text-xs" />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Или URL фото</label>
+                  <input className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newProject.image} onChange={e => setNewProject({...newProject, image: e.target.value})} placeholder="https://..." />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Описание</label>
+                <textarea className="w-full border border-[#1A1A1A]/10 p-3 h-24 focus:border-[#B58B52] outline-none resize-none text-sm" value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} required />
+              </div>
+              <Button type="submit" className="w-full py-4 uppercase tracking-widest text-[10px] font-bold">Сохранить</Button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Category Modal */}
+      {showAddCategory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1A1A1A]/80 p-4">
+          <div className="bg-white w-full max-w-sm p-8 relative text-[#1A1A1A]">
+            <button onClick={() => setShowAddCategory(false)} className="absolute top-4 right-4"><X /></button>
+            <h3 className="mb-6 font-serif">Новая категория</h3>
+            <form onSubmit={handleAddCategory} className="space-y-4">
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Название раздела</label>
+                <input className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="Напр. Отделка фасадов" required />
+              </div>
+              <Button type="submit" className="w-full py-4 uppercase tracking-widest text-[10px] font-bold">Создать</Button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

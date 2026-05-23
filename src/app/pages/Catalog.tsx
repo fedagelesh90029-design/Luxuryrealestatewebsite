@@ -1,22 +1,25 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { categories, workItems } from '../data/workItems';
+import { Plus, Info, X } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { useData } from '../context/DataContext';
 import { useEstimate } from '../context/EstimateContext';
+import { WorkItem } from '../data/workItems';
 
 export function Catalog() {
+  const { services, categories } = useData();
   const [activeCategory, setActiveCategory] = useState('all');
+  const [selectedService, setSelectedService] = useState<WorkItem | null>(null);
   const { addItem } = useEstimate();
+  const navigate = useNavigate();
 
-  const filteredItems = workItems.filter(item => {
+  const filteredItems = services.filter(item => {
     if (activeCategory === 'all') return item.isActive;
     return item.category === activeCategory && item.isActive;
   });
 
-  const handleQuickAdd = (itemId: string) => {
-    const workItem = workItems.find(item => item.id === itemId);
-    if (workItem) {
-      addItem(workItem, 1);
-    }
+  const handleQuickAdd = (e: React.MouseEvent, item: WorkItem) => {
+    e.stopPropagation();
+    addItem(item, 1);
   };
 
   return (
@@ -56,20 +59,26 @@ export function Catalog() {
           {filteredItems.map(item => (
             <div
               key={item.id}
-              className="bg-white p-6 group hover:shadow-lg transition-shadow"
+              onClick={() => setSelectedService(item)}
+              className="bg-white p-6 group hover:shadow-lg transition-shadow cursor-pointer relative"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
+                <div className="flex-1 pr-10">
                   <h4 className="mb-2">{item.name}</h4>
                   <p className="text-sm text-[#1A1A1A]/60">Единица: {item.unit}</p>
                 </div>
-                <button
-                  onClick={() => handleQuickAdd(item.id)}
-                  className="w-10 h-10 flex items-center justify-center bg-[#F5F5F0] group-hover:bg-[#B58B52] group-hover:text-white transition-colors"
-                  title="Добавить в смету"
-                >
-                  <Plus className="w-5 h-5" />
-                </button>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={(e) => handleQuickAdd(e, item)}
+                    className="w-10 h-10 flex items-center justify-center bg-[#F5F5F0] group-hover:bg-[#B58B52] group-hover:text-white transition-colors"
+                    title="Добавить в смету"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
+                  <div className="w-10 h-10 flex items-center justify-center text-[#1A1A1A]/20 group-hover:text-[#B58B52]/40 transition-colors">
+                    <Info className="w-5 h-5" />
+                  </div>
+                </div>
               </div>
               <div className="text-xs text-[#1A1A1A]/40 uppercase tracking-wider">
                 {categories.find(c => c.slug === item.category)?.name}
@@ -78,6 +87,58 @@ export function Catalog() {
           ))}
         </div>
       </div>
+
+      {/* Service Detail Modal */}
+      {selectedService && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#1A1A1A]/80 p-4"
+          onClick={() => setSelectedService(null)}
+        >
+          <div 
+            className="bg-white max-w-xl w-full p-8 relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setSelectedService(null)}
+              className="absolute top-4 right-4 hover:text-[#B58B52] transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <div className="mb-6">
+              <div className="text-xs text-[#B58B52] uppercase tracking-widest mb-2">
+                {categories.find(c => c.slug === selectedService.category)?.name}
+              </div>
+              <h2 className="mb-2">{selectedService.name}</h2>
+              <p className="text-sm text-[#1A1A1A]/60">Единица измерения: {selectedService.unit}</p>
+            </div>
+            
+            <div className="prose prose-sm max-w-none text-[#1A1A1A]/70 mb-8">
+              <h4 className="text-[#1A1A1A] mb-2 font-serif">Описание услуги:</h4>
+              <p>
+                {selectedService.description || 'Описание для данной услуги находится в процессе наполнения. Пожалуйста, свяжитесь с нашим менеджером для получения подробной консультации по данному виду работ.'}
+              </p>
+            </div>
+
+            <div className="flex gap-4">
+              <button 
+                onClick={() => {
+                  addItem(selectedService, 1);
+                  navigate('/calculator');
+                }}
+                className="flex-1 bg-[#1A1A1A] text-white py-3 hover:bg-[#B58B52] transition-colors uppercase tracking-widest text-xs font-bold"
+              >
+                Рассчитать стоимость
+              </button>
+              <button 
+                onClick={() => setSelectedService(null)}
+                className="flex-1 border border-[#1A1A1A]/20 py-3 hover:bg-[#F5F5F0] transition-colors uppercase tracking-widest text-xs font-bold"
+              >
+                Закрыть
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

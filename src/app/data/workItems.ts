@@ -5,6 +5,7 @@ export interface WorkItem {
   price: number; // Hidden from public, shown in admin
   category: string;
   isActive: boolean;
+  description?: string;
 }
 
 export interface Category {
