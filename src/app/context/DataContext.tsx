@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { WorkItem, workItems as initialWorkItems, Category, categories as initialCategories } from '../data/workItems';
-import { Project, initialProjects } from '../data/portfolioItems';
+import { supabase } from '../lib/supabase';
+import { WorkItem, Category } from '../data/workItems';
+import { Project } from '../data/portfolioItems';
 
 export interface RequestItem {
   name: string;
@@ -26,113 +27,126 @@ interface DataContextType {
   categories: Category[];
   projects: Project[];
   requests: Request[];
-  addService: (service: Omit<WorkItem, 'id'>) => void;
-  updateService: (id: string, service: Partial<WorkItem>) => void;
-  deleteService: (id: string) => void;
-  addProject: (project: Omit<Project, 'id'>) => void;
-  updateProject: (id: string, project: Partial<Project>) => void;
-  deleteProject: (id: string) => void;
-  addRequest: (request: Omit<Request, 'id' | 'status' | 'date'>) => void;
-  updateRequestStatus: (id: string, status: Request['status']) => void;
-  deleteRequest: (id: string) => void;
-  addCategory: (category: Omit<Category, 'id' | 'slug'>) => void;
-  deleteCategory: (id: string) => void;
+  loading: boolean;
+  addService: (service: Omit<WorkItem, 'id'>) => Promise<void>;
+  updateService: (id: string, service: Partial<WorkItem>) => Promise<void>;
+  deleteService: (id: string) => Promise<void>;
+  addProject: (project: Omit<Project, 'id'>) => Promise<void>;
+  updateProject: (id: string, project: Partial<Project>) => Promise<void>;
+  deleteProject: (id: string) => Promise<void>;
+  addRequest: (request: Omit<Request, 'id' | 'status' | 'date'>) => Promise<void>;
+  updateRequestStatus: (id: string, status: Request['status']) => Promise<void>;
+  deleteRequest: (id: string) => Promise<void>;
+  addCategory: (category: Omit<Category, 'id' | 'slug'>) => Promise<void>;
+  deleteCategory: (id: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export function DataProvider({ children }: { children: ReactNode }) {
-  const [services, setServices] = useState<WorkItem[]>(() => {
-    const saved = localStorage.getItem('site_services');
-    return saved ? JSON.parse(saved) : initialWorkItems;
-  });
+  const [services, setServices] = useState<WorkItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [categories, setCategories] = useState<Category[]>(() => {
-    const saved = localStorage.getItem('site_categories');
-    return saved ? JSON.parse(saved) : initialCategories;
-  });
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [
+        { data: servicesData },
+        { data: categoriesData },
+        { data: projectsData },
+        { data: requestsData }
+      ] = await Promise.all([
+        supabase.from('services').select('*').order('name'),
+        supabase.from('categories').select('*').order('name'),
+        supabase.from('portfolio').select('*').order('id', { ascending: false }),
+        supabase.from('requests').select('*').order('created_at', { ascending: false })
+      ]);
 
-  const [projects, setProjects] = useState<Project[]>(() => {
-    const saved = localStorage.getItem('site_projects');
-    return saved ? JSON.parse(saved) : initialProjects;
-  });
-
-  const [requests, setRequests] = useState<Request[]>(() => {
-    const saved = localStorage.getItem('site_requests');
-    return saved ? JSON.parse(saved) : [];
-  });
+      if (servicesData) setServices(servicesData);
+      if (categoriesData) setCategories(categoriesData);
+      if (projectsData) setProjects(projectsData);
+      if (requestsData) {
+        setRequests(requestsData.map(r => ({
+          ...r,
+          date: new Date(r.created_at).toLocaleString('ru-RU'),
+          grandTotal: r.grand_total
+        })));
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem('site_services', JSON.stringify(services));
-  }, [services]);
+    fetchData();
+  }, []);
 
-  useEffect(() => {
-    localStorage.setItem('site_categories', JSON.stringify(categories));
-  }, [categories]);
-
-  useEffect(() => {
-    localStorage.setItem('site_projects', JSON.stringify(projects));
-  }, [projects]);
-
-  useEffect(() => {
-    localStorage.setItem('site_requests', JSON.stringify(requests));
-  }, [requests]);
-
-  const addService = (service: Omit<WorkItem, 'id'>) => {
-    const newService = { ...service, id: Math.random().toString(36).substr(2, 9) };
-    setServices(prev => [...prev, newService]);
+  const addService = async (service: Omit<WorkItem, 'id'>) => {
+    const { error } = await supabase.from('services').insert([service]);
+    if (!error) fetchData();
   };
 
-  const updateService = (id: string, updatedFields: Partial<WorkItem>) => {
-    setServices(prev => prev.map(s => s.id === id ? { ...s, ...updatedFields } : s));
+  const updateService = async (id: string, updatedFields: Partial<WorkItem>) => {
+    const { error } = await supabase.from('services').update(updatedFields).eq('id', id);
+    if (!error) fetchData();
   };
 
-  const deleteService = (id: string) => {
-    setServices(prev => prev.filter(s => s.id !== id));
+  const deleteService = async (id: string) => {
+    const { error } = await supabase.from('services').delete().eq('id', id);
+    if (!error) fetchData();
   };
 
-  const addProject = (project: Omit<Project, 'id'>) => {
-    const newProject = { ...project, id: Math.random().toString(36).substr(2, 9) };
-    setProjects(prev => [...prev, newProject]);
+  const addProject = async (project: Omit<Project, 'id'>) => {
+    const { error } = await supabase.from('portfolio').insert([project]);
+    if (!error) fetchData();
   };
 
-  const updateProject = (id: string, updatedFields: Partial<Project>) => {
-    setProjects(prev => prev.map(p => p.id === id ? { ...p, ...updatedFields } : p));
+  const updateProject = async (id: string, updatedFields: Partial<Project>) => {
+    const { error } = await supabase.from('portfolio').update(updatedFields).eq('id', id);
+    if (!error) fetchData();
   };
 
-  const deleteProject = (id: string) => {
-    setProjects(prev => prev.filter(p => p.id !== id));
+  const deleteProject = async (id: string) => {
+    const { error } = await supabase.from('portfolio').delete().eq('id', id);
+    if (!error) fetchData();
   };
 
-  const addRequest = (requestData: Omit<Request, 'id' | 'status' | 'date'>) => {
-    const newRequest: Request = {
-      ...requestData,
-      id: Math.random().toString(36).substr(2, 9),
-      status: 'new',
-      date: new Date().toLocaleString('ru-RU'),
-    };
-    setRequests(prev => [newRequest, ...prev]);
+  const addRequest = async (requestData: Omit<Request, 'id' | 'status' | 'date'>) => {
+    const { error } = await supabase.from('requests').insert([{
+      name: requestData.name,
+      phone: requestData.phone,
+      comment: requestData.comment,
+      grand_total: requestData.grandTotal,
+      items: requestData.items,
+      status: 'new'
+    }]);
+    if (!error) fetchData();
   };
 
-  const updateRequestStatus = (id: string, status: Request['status']) => {
-    setRequests(prev => prev.map(r => r.id === id ? { ...r, status } : r));
+  const updateRequestStatus = async (id: string, status: Request['status']) => {
+    const { error } = await supabase.from('requests').update({ status }).eq('id', id);
+    if (!error) fetchData();
   };
 
-  const deleteRequest = (id: string) => {
-    setRequests(prev => prev.filter(r => r.id !== id));
+  const deleteRequest = async (id: string) => {
+    const { error } = await supabase.from('requests').delete().eq('id', id);
+    if (!error) fetchData();
   };
 
-  const addCategory = (categoryData: Omit<Category, 'id' | 'slug'>) => {
-    const newCategory: Category = {
-      ...categoryData,
-      id: Math.random().toString(36).substr(2, 9),
-      slug: Math.random().toString(36).substr(2, 5) // Simplified slug
-    };
-    setCategories(prev => [...prev, newCategory]);
+  const addCategory = async (categoryData: Omit<Category, 'id' | 'slug'>) => {
+    const slug = categoryData.name.toLowerCase().replace(/\s+/g, '-');
+    const { error } = await supabase.from('categories').insert([{ ...categoryData, slug }]);
+    if (!error) fetchData();
   };
 
-  const deleteCategory = (id: string) => {
-    setCategories(prev => prev.filter(c => c.id !== id));
+  const deleteCategory = async (id: string) => {
+    const { error } = await supabase.from('categories').delete().eq('id', id);
+    if (!error) fetchData();
   };
 
   return (
@@ -141,6 +155,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       categories, 
       projects, 
       requests,
+      loading,
       addService, 
       updateService, 
       deleteService,
