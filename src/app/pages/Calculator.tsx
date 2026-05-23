@@ -7,7 +7,7 @@ import { SubmitModal } from '../components/SubmitModal';
 
 export function Calculator() {
   const { services, categories } = useData();
-  const [activeCategory, setActiveCategory] = useState(categories[0].slug);
+  const [activeCategory, setActiveCategory] = useState(categories[0]?.slug || '');
   const [searchQuery, setSearchQuery] = useState('');
   const [localQuantities, setLocalQuantities] = useState<Record<string, number>>({});
   const [showModal, setShowModal] = useState(false);
@@ -44,20 +44,20 @@ export function Calculator() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F0] py-12">
-      <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
-        <h1 className="mb-12">Калькулятор работ</h1>
+    <div className="min-h-screen bg-[#F5F5F0] py-6 md:py-12">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-12">
+        <h1 className="mb-8 md:mb-12 text-2xl md:text-4xl">Калькулятор работ</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column: Work Catalog */}
-          <div className="lg:col-span-2 bg-white p-8">
+          <div className="lg:col-span-2 bg-white p-4 md:p-8">
             {/* Category Tabs */}
-            <div className="flex flex-wrap gap-6 mb-8 border-b border-[#1A1A1A]/10">
+            <div className="flex flex-wrap gap-4 md:gap-6 mb-8 border-b border-[#1A1A1A]/10">
               {categories.map(category => (
                 <button
                   key={category.slug}
                   onClick={() => setActiveCategory(category.slug)}
-                  className={`pb-4 text-sm tracking-wide transition-colors relative ${
+                  className={`pb-4 text-xs md:text-sm tracking-wide transition-colors relative ${
                     activeCategory === category.slug
                       ? 'text-[#1A1A1A]'
                       : 'text-[#1A1A1A]/50 hover:text-[#1A1A1A]'
@@ -79,7 +79,7 @@ export function Calculator() {
                 placeholder="Поиск работ..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-[#1A1A1A]/20 focus:border-[#B58B52] focus:outline-none transition-colors"
+                className="w-full pl-12 pr-4 py-3 border border-[#1A1A1A]/20 focus:border-[#B58B52] focus:outline-none transition-colors text-sm md:text-base"
               />
             </div>
 
@@ -88,21 +88,21 @@ export function Calculator() {
               {filteredItems.map(item => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between p-6 border border-[#1A1A1A]/10 hover:border-[#B58B52]/50 transition-colors"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 md:p-6 border border-[#1A1A1A]/10 hover:border-[#B58B52]/50 transition-colors gap-4"
                 >
                   <div className="flex-1">
-                    <h4 className="mb-1">{item.name}</h4>
-                    <p className="text-sm text-[#1A1A1A]/60">Единица: {item.unit}</p>
+                    <h4 className="mb-1 text-sm md:text-base">{item.name}</h4>
+                    <p className="text-xs md:text-sm text-[#1A1A1A]/60">Единица: {item.unit}</p>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-between sm:justify-end gap-4">
                     {/* Quantity Stepper */}
-                    <div className="flex items-center border border-[#1A1A1A]/20">
+                    <div className="flex items-center border border-[#1A1A1A]/20 bg-white">
                       <button
                         onClick={() => decrementLocal(item.id)}
-                        className="w-10 h-10 flex items-center justify-center hover:bg-[#F5F5F0] transition-colors"
+                        className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center hover:bg-[#F5F5F0] transition-colors"
                       >
-                        <Minus className="w-4 h-4" />
+                        <Minus className="w-3 h-3 md:w-4 md:h-4" />
                       </button>
                       <input
                         type="number"
@@ -112,13 +112,13 @@ export function Calculator() {
                           ...prev,
                           [item.id]: Math.max(1, parseInt(e.target.value) || 1),
                         }))}
-                        className="w-16 h-10 text-center border-x border-[#1A1A1A]/20 focus:outline-none"
+                        className="w-10 h-8 md:w-16 md:h-10 text-center border-x border-[#1A1A1A]/20 focus:outline-none text-sm"
                       />
                       <button
                         onClick={() => incrementLocal(item.id)}
-                        className="w-10 h-10 flex items-center justify-center hover:bg-[#F5F5F0] transition-colors"
+                        className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center hover:bg-[#F5F5F0] transition-colors"
                       >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-3 h-3 md:w-4 md:h-4" />
                       </button>
                     </div>
 
@@ -126,7 +126,7 @@ export function Calculator() {
                     <Button
                       onClick={() => handleAddToEstimate(item.id)}
                       variant="outline"
-                      className="px-6"
+                      className="px-4 md:px-6 py-2 md:py-3 text-xs md:text-sm whitespace-nowrap"
                     >
                       Добавить
                     </Button>
@@ -144,25 +144,25 @@ export function Calculator() {
 
           {/* Right Column: Estimate Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white p-8 sticky top-24">
-              <h3 className="mb-6">Ваша смета</h3>
+            <div className="bg-white p-6 md:p-8 sticky top-24 shadow-sm border border-[#1A1A1A]/5">
+              <h3 className="mb-6 text-xl">Ваша смета</h3>
 
               {items.length === 0 ? (
-                <p className="text-sm text-[#1A1A1A]/60 py-8 text-center">
+                <p className="text-sm text-[#1A1A1A]/60 py-8 text-center border-2 border-dashed border-[#1A1A1A]/10">
                   Добавьте работы из каталога
                 </p>
               ) : (
                 <>
-                  <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto">
+                  <div className="space-y-4 mb-6 max-h-[300px] md:max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                     {items.map(item => (
                       <div key={item.workItem.id} className="pb-4 border-b border-[#1A1A1A]/10">
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex-1 pr-2">
-                            <h4 className="text-sm">{item.workItem.name}</h4>
+                            <h4 className="text-xs md:text-sm font-medium">{item.workItem.name}</h4>
                           </div>
                           <button
                             onClick={() => removeItem(item.workItem.id)}
-                            className="text-[#1A1A1A]/40 hover:text-destructive transition-colors"
+                            className="text-[#1A1A1A]/40 hover:text-red-600 transition-colors p-1"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -173,17 +173,22 @@ export function Calculator() {
                             min="1"
                             value={item.quantity}
                             onChange={(e) => updateQuantity(item.workItem.id, parseInt(e.target.value) || 1)}
-                            className="w-20 px-2 py-1 text-sm border border-[#1A1A1A]/20 focus:border-[#B58B52] focus:outline-none"
+                            className="w-16 md:w-20 px-2 py-1 text-xs md:text-sm border border-[#1A1A1A]/20 focus:border-[#B58B52] focus:outline-none"
                           />
-                          <span className="text-sm text-[#1A1A1A]/60">{item.workItem.unit}</span>
+                          <span className="text-xs md:text-sm text-[#1A1A1A]/60">{item.workItem.unit}</span>
+                          <span className="ml-auto text-xs md:text-sm font-bold">{(item.quantity * item.workItem.price).toLocaleString()} ₽</span>
                         </div>
                       </div>
                     ))}
                   </div>
 
                   <div className="bg-[#F5F5F0] p-4 mb-6">
-                    <p className="text-sm text-[#1A1A1A]/70 text-center">
-                      Смета будет рассчитана менеджером
+                    <div className="flex justify-between items-center mb-1 font-bold">
+                      <span className="text-sm uppercase tracking-wider opacity-60">Итого:</span>
+                      <span className="text-lg text-[#B58B52] font-serif">{items.reduce((sum, i) => sum + i.quantity * i.workItem.price, 0).toLocaleString()} ₽</span>
+                    </div>
+                    <p className="text-[10px] text-[#1A1A1A]/50 text-center mt-2 leading-tight">
+                      Предварительная стоимость. Окончательная смета будет рассчитана инженером.
                     </p>
                   </div>
 
@@ -191,17 +196,16 @@ export function Calculator() {
                     <Button
                       onClick={() => setShowModal(true)}
                       variant="primary"
-                      className="w-full"
+                      className="w-full py-4 text-xs md:text-sm uppercase tracking-widest font-bold"
                     >
-                      Отправить смету
+                      Оформить заявку
                     </Button>
-                    <Button
+                    <button
                       onClick={clearAll}
-                      variant="outline"
-                      className="w-full"
+                      className="w-full py-2 text-[10px] text-[#1A1A1A]/40 hover:text-red-600 transition-colors uppercase tracking-widest"
                     >
                       Очистить всё
-                    </Button>
+                    </button>
                   </div>
                 </>
               )}

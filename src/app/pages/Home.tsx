@@ -82,28 +82,38 @@ export function Home() {
       </section>
 
       {/* Featured Projects */}
-      <section className="py-24">
+      <section className="py-16 md:py-24">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <h2 className="mb-16 text-center">Реализованные проекты</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <h2 className="mb-12 md:mb-16 text-center text-2xl md:text-4xl">Реализованные проекты</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             {projects.map((project) => (
               <Link
                 key={project.id}
                 to="/portfolio"
-                className="group relative overflow-hidden bg-white"
+                className="group relative overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all duration-500"
               >
-                <div className="aspect-[4/3] overflow-hidden">
+                <div className="aspect-[16/10] sm:aspect-[4/3] overflow-hidden">
                   <ImageWithFallback
                     src={project.image}
                     alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 </div>
-                <div className="p-8">
-                  <h3 className="mb-2">{project.title}</h3>
-                  <div className="flex items-center justify-between text-sm text-[#1A1A1A]/60">
-                    <span>{project.location}</span>
-                    <span>{project.area}</span>
+                <div className="p-6 md:p-10">
+                  <h3 className="mb-4 text-xl md:text-2xl font-serif">{project.title}</h3>
+                  <div className="grid grid-cols-3 gap-4 border-t border-[#1A1A1A]/10 pt-6">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest opacity-40 mb-1">Локация</p>
+                      <p className="text-xs md:text-sm font-medium">{project.location}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest opacity-40 mb-1">Площадь</p>
+                      <p className="text-xs md:text-sm font-medium">{project.area}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase tracking-widest opacity-40 mb-1">Год</p>
+                      <p className="text-xs md:text-sm font-medium">{project.year}</p>
+                    </div>
                   </div>
                 </div>
               </Link>
