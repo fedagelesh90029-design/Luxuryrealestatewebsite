@@ -63,21 +63,9 @@ export function Catalog() {
               className="bg-white p-6 group hover:shadow-lg transition-shadow cursor-pointer relative"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="flex-1 pr-10">
+                <div className="flex-1">
                   <h4 className="mb-2">{item.name}</h4>
                   <p className="text-sm text-[#1A1A1A]/60">Единица: {item.unit}</p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <button
-                    onClick={(e) => handleQuickAdd(e, item)}
-                    className="w-10 h-10 flex items-center justify-center bg-[#F5F5F0] group-hover:bg-[#B58B52] group-hover:text-white transition-colors"
-                    title="Добавить в смету"
-                  >
-                    <Plus className="w-5 h-5" />
-                  </button>
-                  <div className="w-10 h-10 flex items-center justify-center text-[#1A1A1A]/20 group-hover:text-[#B58B52]/40 transition-colors">
-                    <Info className="w-5 h-5" />
-                  </div>
                 </div>
               </div>
               <div className="text-xs text-[#1A1A1A]/40 uppercase tracking-wider">

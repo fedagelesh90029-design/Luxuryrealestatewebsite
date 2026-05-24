@@ -15,54 +15,55 @@ export interface Category {
 }
 
 export const categories: Category[] = [
-  { id: '1', name: 'Фундаментные работы', slug: 'foundation' },
-  { id: '2', name: 'Стены и перекрытия', slug: 'walls' },
-  { id: '3', name: 'Кровельные работы', slug: 'roofing' },
-  { id: '4', name: 'Фасадные работы', slug: 'facade' },
-  { id: '5', name: 'Внутренняя отделка', slug: 'interior' },
-  { id: '6', name: 'Инженерные системы', slug: 'engineering' },
+  { id: '1', name: 'Подготовительный этап', slug: 'prep' },
+  { id: '2', name: 'Фундамент', slug: 'foundation' },
+  { id: '3', name: 'Коробка здания', slug: 'walls' },
+  { id: '4', name: 'Кровля', slug: 'roofing' },
+  { id: '5', name: 'Фасады и остекление', slug: 'facade' },
+  { id: '6', name: 'Инженерные сети', slug: 'engineering' },
+  { id: '7', name: 'Черновая отделка', slug: 'interior_rough' },
 ];
 
 export const workItems: WorkItem[] = [
-  // Фундаментные работы
-  { id: '1', name: 'Земляные работы', unit: 'м³', price: 1200, category: 'foundation', isActive: true },
-  { id: '2', name: 'Устройство песчаной подушки', unit: 'м³', price: 800, category: 'foundation', isActive: true },
-  { id: '3', name: 'Монолитный ленточный фундамент', unit: 'м³', price: 12500, category: 'foundation', isActive: true },
-  { id: '4', name: 'Монолитная плита фундамента', unit: 'м²', price: 5800, category: 'foundation', isActive: true },
-  { id: '5', name: 'Гидроизоляция фундамента', unit: 'м²', price: 450, category: 'foundation', isActive: true },
+  // Подготовительный этап
+  { id: '1', name: 'Геодезическая разбивка осей', unit: 'усл.ед', price: 15000, category: 'prep', isActive: true },
+  { id: '2', name: 'Разработка грунта экскаватором', unit: 'м³', price: 850, category: 'prep', isActive: true },
+  { id: '3', name: 'Вывоз грунта и утилизация', unit: 'м³', price: 650, category: 'prep', isActive: true },
   
-  // Стены и перекрытия
-  { id: '6', name: 'Кладка стен из газобетона', unit: 'м³', price: 4200, category: 'walls', isActive: true },
-  { id: '7', name: 'Кладка стен из кирпича', unit: 'м³', price: 6800, category: 'walls', isActive: true },
-  { id: '8', name: 'Монолитные перекрытия', unit: 'м²', price: 4500, category: 'walls', isActive: true },
-  { id: '9', name: 'Армирование конструкций', unit: 'т', price: 68000, category: 'walls', isActive: true },
-  { id: '10', name: 'Устройство перемычек', unit: 'шт', price: 3200, category: 'walls', isActive: true },
+  // Фундамент
+  { id: '4', name: 'Устройство щебеночно-песчаного основания', unit: 'м³', price: 2800, category: 'foundation', isActive: true },
+  { id: '5', name: 'Монтаж опалубки фундамента', unit: 'м²', price: 950, category: 'foundation', isActive: true },
+  { id: '6', name: 'Вязка арматурного каркаса', unit: 'т', price: 45000, category: 'foundation', isActive: true },
+  { id: '7', name: 'Бетонирование фундаментной плиты (с бетоном)', unit: 'м³', price: 14500, category: 'foundation', isActive: true },
+  { id: '8', name: 'Гидроизоляция фундамента обмазочная', unit: 'м²', price: 550, category: 'foundation', isActive: true },
   
-  // Кровельные работы
-  { id: '11', name: 'Стропильная система', unit: 'м²', price: 1800, category: 'roofing', isActive: true },
-  { id: '12', name: 'Обрешетка и контробрешетка', unit: 'м²', price: 650, category: 'roofing', isActive: true },
-  { id: '13', name: 'Металлочерепица (монтаж)', unit: 'м²', price: 980, category: 'roofing', isActive: true },
-  { id: '14', name: 'Мягкая кровля (монтаж)', unit: 'м²', price: 1450, category: 'roofing', isActive: true },
-  { id: '15', name: 'Водосточная система', unit: 'м.п.', price: 1100, category: 'roofing', isActive: true },
+  // Коробка здания
+  { id: '9', name: 'Возведение стен из газобетона (D500)', unit: 'м³', price: 5500, category: 'walls', isActive: true },
+  { id: '10', name: 'Кладка перегородок из кирпича', unit: 'м²', price: 1200, category: 'walls', isActive: true },
+  { id: '11', name: 'Устройство монолитного армопояса', unit: 'м.п.', price: 2200, category: 'walls', isActive: true },
+  { id: '12', name: 'Монтаж сборных ж/б перекрытий', unit: 'шт', price: 4500, category: 'walls', isActive: true },
+  { id: '13', name: 'Монолитное перекрытие (работа+материалы)', unit: 'м²', price: 8500, category: 'walls', isActive: true },
   
-  // Фасадные работы
-  { id: '16', name: 'Утепление фасада минватой', unit: 'м²', price: 1250, category: 'facade', isActive: true },
-  { id: '17', name: 'Штукатурка фасада', unit: 'м²', price: 850, category: 'facade', isActive: true },
-  { id: '18', name: 'Покраска фасада', unit: 'м²', price: 420, category: 'facade', isActive: true },
-  { id: '19', name: 'Облицовка фасада кирпичом', unit: 'м²', price: 3800, category: 'facade', isActive: true },
-  { id: '20', name: 'Вентилируемый фасад', unit: 'м²', price: 2900, category: 'facade', isActive: true },
+  // Кровля
+  { id: '14', name: 'Монтаж стропильной системы', unit: 'м²', price: 1800, category: 'roofing', isActive: true },
+  { id: '15', name: 'Утепление кровли (200мм)', unit: 'м²', price: 1100, category: 'roofing', isActive: true },
+  { id: '16', name: 'Монтаж металлочерепицы Grand Line', unit: 'м²', price: 1450, category: 'roofing', isActive: true },
+  { id: '17', name: 'Устройство плоской кровли (ПВХ-мембрана)', unit: 'м²', price: 2900, category: 'roofing', isActive: true },
   
-  // Внутренняя отделка
-  { id: '21', name: 'Штукатурка стен', unit: 'м²', price: 480, category: 'interior', isActive: true },
-  { id: '22', name: 'Шпаклевка под покраску', unit: 'м²', price: 380, category: 'interior', isActive: true },
-  { id: '23', name: 'Укладка керамогранита', unit: 'м²', price: 1200, category: 'interior', isActive: true },
-  { id: '24', name: 'Монтаж гипсокартона', unit: 'м²', price: 650, category: 'interior', isActive: true },
-  { id: '25', name: 'Устройство стяжки пола', unit: 'м²', price: 720, category: 'interior', isActive: true },
+  // Фасады и остекление
+  { id: '18', name: 'Утепление фасада (базальтовая плита)', unit: 'м²', price: 1650, category: 'facade', isActive: true },
+  { id: '19', name: 'Нанесение декоративной штукатурки (Короед)', unit: 'м²', price: 1200, category: 'facade', isActive: true },
+  { id: '20', name: 'Облицовка фасада термопанелями', unit: 'м²', price: 3500, category: 'facade', isActive: true },
+  { id: '21', name: 'Монтаж ПВХ окон (Rehau 70мм)', unit: 'м²', price: 9500, category: 'facade', isActive: true },
   
-  // Инженерные системы
-  { id: '26', name: 'Система отопления', unit: 'м²', price: 2400, category: 'engineering', isActive: true },
-  { id: '27', name: 'Водоснабжение', unit: 'м²', price: 1600, category: 'engineering', isActive: true },
-  { id: '28', name: 'Канализация', unit: 'м²', price: 1400, category: 'engineering', isActive: true },
-  { id: '29', name: 'Электромонтажные работы', unit: 'м²', price: 1800, category: 'engineering', isActive: true },
-  { id: '30', name: 'Система вентиляции', unit: 'м²', price: 2200, category: 'engineering', isActive: true },
+  // Инженерные сети
+  { id: '22', name: 'Разводка труб водоснабжения (Rehau)', unit: 'тчк', price: 4500, category: 'engineering', isActive: true },
+  { id: '23', name: 'Монтаж водяного теплого пола', unit: 'м²', price: 1800, category: 'engineering', isActive: true },
+  { id: '24', name: 'Электромонтажные работы (черновые)', unit: 'тчк', price: 1100, category: 'engineering', isActive: true },
+  { id: '25', name: 'Установка и обвязка котла', unit: 'шт', price: 25000, category: 'engineering', isActive: true },
+  
+  // Черновая отделка
+  { id: '26', name: 'Штукатурка стен механизированная', unit: 'м²', price: 750, category: 'interior_rough', isActive: true },
+  { id: '27', name: 'Полусухая стяжка пола', unit: 'м²', price: 950, category: 'interior_rough', isActive: true },
+  { id: '28', name: 'Монтаж ГКЛ на потолок', unit: 'м²', price: 1400, category: 'interior_rough', isActive: true },
 ];

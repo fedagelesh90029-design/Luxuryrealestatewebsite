@@ -83,7 +83,10 @@ export function Portfolio() {
             className="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative">
+            <div 
+              className="relative overflow-hidden bg-[#1A1A1A]" 
+              style={{ height: '50vh', minHeight: '300px' }}
+            >
               <button
                 onClick={() => setSelectedProject(null)}
                 className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 flex items-center justify-center hover:bg-white transition-colors"
@@ -93,7 +96,7 @@ export function Portfolio() {
               <ImageWithFallback
                 src={selectedProject.image}
                 alt={selectedProject.title}
-                className="w-full h-auto"
+                className="w-full h-full object-cover object-center"
               />
             </div>
             <div className="p-12">

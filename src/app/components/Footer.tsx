@@ -45,10 +45,10 @@ export function Footer() {
           <div>
             <h4 className="mb-6 text-[#B58B52] font-serif">Услуги</h4>
             <ul className="space-y-3 text-sm text-[#F5F5F0]/70">
-              <li>Фундаментные работы</li>
-              <li>Возведение стен</li>
-              <li>Кровельные работы</li>
-              <li>Отделка фасадов</li>
+              <li>Монолитные работы</li>
+              <li>Индивидуальное проектирование</li>
+              <li>Кровельные системы</li>
+              <li>Фасадные решения</li>
             </ul>
           </div>
 
@@ -75,11 +75,6 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-[#F5F5F0]/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[#F5F5F0]/50">
             <p>© {new Date().getFullYear()} {siteConfig.name}. Все права защищены.</p>
-            <div className="flex gap-6">
-              <Link to="/admin" className="hover:text-[#B58B52] transition-colors">
-                Админ-панель
-              </Link>
-            </div>
           </div>
         </div>
       </div>
