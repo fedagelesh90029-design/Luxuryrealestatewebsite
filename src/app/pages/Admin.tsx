@@ -28,6 +28,7 @@ export function Admin() {
   } = useData();
   
   const [activeView, setActiveView] = useState<View>('requests');
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(null);
   const [showAddService, setShowAddService] = useState(false);
   const [showAddProject, setShowAddProject] = useState(false);
   const [showAddCategory, setShowAddCategory] = useState(false);
@@ -361,32 +362,99 @@ export function Admin() {
         {/* Categories View */}
         {activeView === 'categories' && (
           <div>
-            <div className="flex items-center justify-between mb-8">
-              <h2>Категории работ</h2>
-              <Button variant="primary" className="flex items-center gap-2" onClick={() => setShowAddCategory(true)}>
-                <Plus className="w-4 h-4" />
-                Создать категорию
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {categories.map(category => {
-                const count = services.filter(item => item.category === category.slug).length;
-                return (
-                  <div key={category.id} className="bg-white p-8 border-t-4 border-[#B58B52] shadow-sm relative group">
+            {selectedCategorySlug ? (
+              <div>
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
                     <button 
-                      onClick={() => deleteCategory(category.id)}
-                      className="absolute top-4 right-4 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-[#F5F5F0]"
+                      onClick={() => setSelectedCategorySlug(null)}
+                      className="p-2 hover:bg-white rounded-full transition-colors"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <X className="w-6 h-6" />
                     </button>
-                    <h3 className="mb-2 text-xl">{category.name}</h3>
-                    <p className="text-sm text-[#1A1A1A]/40 mb-6 uppercase tracking-widest">{count} работ привязано</p>
-                    <div className="text-[10px] text-[#1A1A1A]/20 font-mono">Slug: {category.slug}</div>
+                    <h2>Работы в категории: {categories.find(c => c.slug === selectedCategorySlug)?.name}</h2>
                   </div>
-                );
-              })}
-            </div>
+                  <Button variant="primary" className="flex items-center gap-2" onClick={() => {
+                    setEditingService(null);
+                    setNewService({ name: '', unit: 'м²', price: 0, category: selectedCategorySlug, isActive: true, description: '' });
+                    setShowAddService(true);
+                  }}>
+                    <Plus className="w-4 h-4" />
+                    Добавить работу
+                  </Button>
+                </div>
+
+                <div className="bg-white overflow-hidden shadow-sm">
+                  <table className="w-full text-sm">
+                    <thead className="bg-[#F5F5F0]">
+                      <tr>
+                        <th className="text-left py-4 px-6 uppercase tracking-widest text-[10px]">Название</th>
+                        <th className="text-center py-4 px-6 uppercase tracking-widest text-[10px]">Ед. изм.</th>
+                        <th className="text-right py-4 px-6 uppercase tracking-widest text-[10px]">Цена</th>
+                        <th className="text-center py-4 px-6 uppercase tracking-widest text-[10px]">Действия</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#1A1A1A]/5">
+                      {services.filter(s => s.category === selectedCategorySlug).map((item) => (
+                        <tr key={item.id} className="hover:bg-[#F5F5F0]/50 transition-colors">
+                          <td className="py-4 px-6">
+                            <div className="font-medium">{item.name}</div>
+                            {item.description && <div className="text-[10px] opacity-40 line-clamp-1">{item.description}</div>}
+                          </td>
+                          <td className="text-center py-4 px-6">{item.unit}</td>
+                          <td className="text-right py-4 px-6 font-bold">{item.price.toLocaleString()} ₽</td>
+                          <td className="py-4 px-6">
+                            <div className="flex items-center justify-center gap-2">
+                              <button onClick={() => handleEditService(item)} className="p-2 hover:bg-[#F5F5F0] transition-colors"><Pencil className="w-4 h-4" /></button>
+                              <button onClick={() => deleteService(item.id)} className="p-2 hover:bg-[#F5F5F0] transition-colors text-red-600"><Trash2 className="w-4 h-4" /></button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="flex items-center justify-between mb-8">
+                  <h2>Категории работ</h2>
+                  <Button variant="primary" className="flex items-center gap-2" onClick={() => setShowAddCategory(true)}>
+                    <Plus className="w-4 h-4" />
+                    Создать категорию
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {categories.map(category => {
+                    const count = services.filter(item => item.category === category.slug).length;
+                    return (
+                      <div 
+                        key={category.id} 
+                        onClick={() => setSelectedCategorySlug(category.slug)}
+                        className="bg-white p-8 border-t-4 border-[#B58B52] shadow-sm relative group cursor-pointer hover:shadow-md transition-shadow"
+                      >
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteCategory(category.id);
+                          }}
+                          className="absolute top-4 right-4 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-[#F5F5F0]"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <h3 className="mb-2 text-xl">{category.name}</h3>
+                        <p className="text-sm text-[#1A1A1A]/40 mb-6 uppercase tracking-widest">{count} работ привязано</p>
+                        <div className="flex items-center justify-between">
+                          <div className="text-[10px] text-[#1A1A1A]/20 font-mono">Slug: {category.slug}</div>
+                          <span className="text-[10px] uppercase tracking-widest text-[#B58B52] font-bold">Открыть →</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>
