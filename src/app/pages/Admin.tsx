@@ -57,6 +57,7 @@ export function Admin() {
   });
 
   const [newCatName, setNewCatName] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const menuItems = [
     { id: 'requests' as View, label: 'Заявки', icon: FileText },
@@ -114,9 +115,40 @@ export function Admin() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setIsUploading(true);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setNewProject(prev => ({ ...prev, image: reader.result as string }));
+        const img = new Image();
+        img.src = reader.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Compress to JPEG with 0.7 quality
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          setNewProject(prev => ({ ...prev, image: compressedBase64 }));
+          setIsUploading(false);
+        };
       };
       reader.readAsDataURL(file);
     }
@@ -533,14 +565,46 @@ export function Admin() {
                   <input className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newProject.area} onChange={e => setNewProject({...newProject, area: e.target.value})} required />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Фото проекта</label>
-                  <input type="file" accept="image/*" onChange={handleFileChange} className="w-full text-xs" />
+              <div className="grid grid-cols-1 gap-4">
+                <div className="border-2 border-dashed border-[#1A1A1A]/10 p-4 text-center">
+                  {isUploading ? (
+                    <div className="py-8 flex flex-col items-center gap-2">
+                      <div className="w-8 h-8 border-4 border-[#B58B52] border-t-transparent rounded-full animate-spin"></div>
+                      <p className="text-xs opacity-50">Сжатие фото...</p>
+                    </div>
+                  ) : newProject.image ? (
+                    <div className="relative group inline-block">
+                      <img src={newProject.image} alt="Preview" className="max-h-48 mx-auto" />
+                      <button 
+                        type="button"
+                        onClick={() => setNewProject(prev => ({ ...prev, image: '' }))}
+                        className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="py-8">
+                      <ImageIcon className="w-12 h-12 mx-auto mb-2 opacity-10" />
+                      <p className="text-xs opacity-40">Выберите файл или вставьте ссылку ниже</p>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Или URL фото</label>
-                  <input className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none" value={newProject.image} onChange={e => setNewProject({...newProject, image: e.target.value})} placeholder="https://..." />
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Загрузить файл</label>
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="w-full text-xs" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">URL или Data-строка</label>
+                    <textarea 
+                      className="w-full border border-[#1A1A1A]/10 p-2 h-10 focus:border-[#B58B52] outline-none resize-none text-[8px] font-mono break-all" 
+                      value={newProject.image} 
+                      onChange={e => setNewProject({...newProject, image: e.target.value})} 
+                      placeholder="https://... или data:image/..." 
+                    />
+                  </div>
                 </div>
               </div>
               <div>
