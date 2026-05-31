@@ -15,6 +15,7 @@ export function Admin() {
     categories, 
     projects, 
     requests, 
+    loading,
     addService, 
     updateService, 
     deleteService, 
@@ -229,7 +230,15 @@ export function Admin() {
             </div>
 
             <div className="space-y-6">
-              {requests.length === 0 ? (
+              {loading ? (
+                [1, 2, 3].map(i => (
+                  <div key={i} className="bg-white p-6 border-l-4 border-[#B58B52]/20 shadow-sm animate-pulse">
+                    <div className="h-6 bg-[#1A1A1A]/5 w-1/4 mb-4" />
+                    <div className="h-20 bg-[#1A1A1A]/5 w-full mb-4" />
+                    <div className="h-32 bg-[#1A1A1A]/5 w-full" />
+                  </div>
+                ))
+              ) : requests.length === 0 ? (
                 <div className="bg-white p-12 text-center text-[#1A1A1A]/40 border-2 border-dashed">
                   Заявок пока нет
                 </div>
@@ -327,7 +336,17 @@ export function Admin() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1A1A1A]/5">
-                  {services.map((item) => (
+                  {loading ? (
+                    [1, 2, 3, 4, 5].map(i => (
+                      <tr key={i} className="animate-pulse">
+                        <td className="py-4 px-6"><div className="h-4 bg-[#1A1A1A]/5 w-3/4" /></td>
+                        <td className="py-4 px-6"><div className="h-4 bg-[#1A1A1A]/5 w-1/2" /></td>
+                        <td className="py-4 px-6"><div className="h-4 bg-[#1A1A1A]/5 w-1/4 mx-auto" /></td>
+                        <td className="py-4 px-6"><div className="h-4 bg-[#1A1A1A]/5 w-1/4 ml-auto" /></td>
+                        <td className="py-4 px-6"><div className="h-8 bg-[#1A1A1A]/5 w-16 mx-auto" /></td>
+                      </tr>
+                    ))
+                  ) : services.map((item) => (
                     <tr key={item.id} className="hover:bg-[#F5F5F0]/50 transition-colors">
                       <td className="py-4 px-6">
                         <div className="font-medium">{item.name}</div>
@@ -368,7 +387,17 @@ export function Admin() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map(project => (
+              {loading ? (
+                [1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className="bg-white overflow-hidden border border-[#1A1A1A]/10 shadow-sm animate-pulse">
+                    <div className="h-48 bg-[#1A1A1A]/5" />
+                    <div className="p-5 space-y-3">
+                      <div className="h-6 bg-[#1A1A1A]/5 w-3/4" />
+                      <div className="h-4 bg-[#1A1A1A]/5 w-1/2" />
+                    </div>
+                  </div>
+                ))
+              ) : projects.map(project => (
                 <div key={project.id} className="bg-white group overflow-hidden border border-[#1A1A1A]/10 shadow-sm">
                   <div className="h-48 overflow-hidden relative cursor-pointer" onClick={() => handleEditProject(project)}>
                     <ImageWithFallback src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />

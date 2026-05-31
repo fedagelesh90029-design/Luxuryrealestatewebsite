@@ -3,8 +3,10 @@ import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { Button } from '../components/Button';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { siteConfig } from '../data/siteConfig';
+import { useData } from '../context/DataContext';
 
 export function Contacts() {
+  const { addRequest } = useData();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -26,9 +28,17 @@ export function Contacts() {
     setFormData({ ...formData, phone: formatPhone(e.target.value) });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Contact form submitted:', formData);
+    
+    await addRequest({
+      name: formData.name,
+      phone: formData.phone,
+      comment: formData.message,
+      items: [],
+      grandTotal: 0
+    });
+
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);

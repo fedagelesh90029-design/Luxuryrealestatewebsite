@@ -6,7 +6,7 @@ import { useData } from '../context/DataContext';
 import { Project } from '../data/portfolioItems';
 
 export function Portfolio() {
-  const { projects } = useData();
+  const { projects, loading } = useData();
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
 
@@ -46,30 +46,47 @@ export function Portfolio() {
 
         {/* Masonry Grid */}
         <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}>
-          <Masonry gutter="24px">
-            {filteredProjects.map(project => (
-              <div
-                key={project.id}
-                onClick={() => setSelectedProject(project)}
-                className="bg-white cursor-pointer group overflow-hidden"
-              >
-                <div className="overflow-hidden">
-                  <ImageWithFallback
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="mb-2">{project.title}</h3>
-                  <div className="flex items-center justify-between text-sm text-[#1A1A1A]/60">
-                    <span>{project.location}</span>
-                    <span>{project.year}</span>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="bg-white animate-pulse">
+                  <div className="aspect-[4/3] bg-[#1A1A1A]/5" />
+                  <div className="p-6 space-y-3">
+                    <div className="h-6 bg-[#1A1A1A]/5 w-3/4" />
+                    <div className="flex justify-between">
+                      <div className="h-4 bg-[#1A1A1A]/5 w-1/4" />
+                      <div className="h-4 bg-[#1A1A1A]/5 w-1/4" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </Masonry>
+              ))}
+            </div>
+          ) : (
+            <Masonry gutter="24px">
+              {filteredProjects.map(project => (
+                <div
+                  key={project.id}
+                  onClick={() => setSelectedProject(project)}
+                  className="bg-white cursor-pointer group overflow-hidden"
+                >
+                  <div className="overflow-hidden">
+                    <ImageWithFallback
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="mb-2">{project.title}</h3>
+                    <div className="flex items-center justify-between text-sm text-[#1A1A1A]/60">
+                      <span>{project.location}</span>
+                      <span>{project.year}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Masonry>
+          )}
         </ResponsiveMasonry>
       </div>
 

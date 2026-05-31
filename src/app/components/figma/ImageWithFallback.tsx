@@ -5,25 +5,37 @@ const SAFE_PLACEHOLDER = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWln
 
 export function ImageWithFallback(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   const [didError, setDidError] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   const handleError = () => {
     setDidError(true)
   }
 
-  const { src, alt, style, className, ...rest } = props
+  const handleLoad = () => {
+    setIsLoaded(true)
+  }
+
+  const { src, alt, style, className, loading = "lazy", ...rest } = props
 
   // If error or no src, show the unblockable base64 placeholder
   const imageSrc = (didError || !src) ? SAFE_PLACEHOLDER : src;
 
   return (
-    <div className={`relative overflow-hidden bg-[#1A1A1A] ${className ?? ''}`} style={style}>
+    <div className={`relative overflow-hidden bg-[#1A1A1A]/5 ${className ?? ''}`} style={style}>
       <img 
         src={imageSrc} 
         alt={alt} 
-        className="w-full h-full object-cover"
+        loading={loading}
+        onLoad={handleLoad}
+        onError={handleError}
+        className={`w-full h-full object-cover transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         {...rest} 
-        onError={handleError} 
       />
+      {!isLoaded && !didError && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-[#B58B52]/20 border-t-[#B58B52] rounded-full animate-spin" />
+        </div>
+      )}
       {(didError || !src) && (
         <div className="absolute inset-0 flex items-end justify-center pb-4 bg-gradient-to-t from-black/50 to-transparent">
           <span className="text-[8px] text-white/40 uppercase tracking-[0.3em] font-medium px-4 text-center">{alt || 'Проект БЕЛ-СТРОЙ'}</span>
