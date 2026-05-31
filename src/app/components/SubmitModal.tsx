@@ -183,9 +183,6 @@ ${items.length > 0 ? `Состав заказа:\n${orderDetails}\n\nИТОГО:
                     </div>
                     <span className="font-serif text-2xl tracking-tighter uppercase">{siteConfig.name}</span>
                   </div>
-                  <p className="text-[10px] uppercase tracking-widest opacity-50 max-w-[200px]">
-                    Строительство и проектирование индивидуальных домов в Сочи
-                  </p>
                 </div>
                 <div className="text-right">
                   <h1 className="text-3xl font-serif mb-2 uppercase tracking-widest">{isTurnkeyRequest && items.length === 0 ? 'Заявка' : 'Смета'}</h1>
