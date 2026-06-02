@@ -10,6 +10,11 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 type View = 'requests' | 'works' | 'categories' | 'portfolio';
 
 export function Admin() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [login, setLogin] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
   const { 
     services, 
     categories, 
@@ -36,6 +41,56 @@ export function Admin() {
   
   const [editingService, setEditingService] = useState<WorkItem | null>(null);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (login === 'belstroy' && password === 'belstroy') {
+      setIsAuthenticated(true);
+      setError('');
+    } else {
+      setError('Неверный логин или пароль');
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#F5F5F0] flex items-center justify-center p-4">
+        <div className="bg-white p-8 shadow-xl max-w-sm w-full border-t-4 border-[#B58B52]">
+          <div className="text-center mb-8">
+            <h1 className="font-serif text-2xl mb-2">{siteConfig.name}</h1>
+            <p className="text-xs uppercase tracking-widest opacity-40">Вход в панель управления</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Логин</label>
+              <input 
+                type="text" 
+                className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none"
+                value={login}
+                onChange={e => setLogin(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Пароль</label>
+              <input 
+                type="password" 
+                className="w-full border-b border-[#1A1A1A]/20 py-2 focus:border-[#B58B52] outline-none"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <p className="text-red-600 text-[10px] uppercase tracking-widest text-center">{error}</p>}
+            <Button type="submit" className="w-full py-4 uppercase tracking-widest text-[10px] font-bold">Войти</Button>
+          </form>
+          <div className="mt-8 text-center">
+            <a href="/" className="text-[10px] uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity">← Вернуться на сайт</a>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Form states
   const [newService, setNewService] = useState<Omit<WorkItem, 'id'>>({
@@ -184,8 +239,12 @@ export function Admin() {
       <aside className="w-64 bg-[#1A1A1A] text-[#F5F5F0] p-6 flex flex-col">
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-[#B58B52] flex items-center justify-center">
-              <span className="font-serif text-xl text-[#1A1A1A]">{siteConfig.shortName}</span>
+            <div className="w-10 h-10 bg-[#B58B52] flex items-center justify-center overflow-hidden">
+              {siteConfig.logo ? (
+                <img src={siteConfig.logo} alt={siteConfig.shortName} className="w-full h-full object-cover" />
+              ) : (
+                <span className="font-serif text-xl text-[#1A1A1A]">{siteConfig.shortName}</span>
+              )}
             </div>
             <span className="font-serif text-xl">{siteConfig.name}</span>
           </div>

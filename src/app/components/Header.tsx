@@ -22,8 +22,12 @@ export function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3" onClick={() => setMobileMenuOpen(false)}>
-            <div className="w-10 h-10 bg-[#B58B52] flex items-center justify-center">
-              <span className="font-serif text-xl text-[#1A1A1A]">{siteConfig.shortName}</span>
+            <div className="w-10 h-10 bg-[#B58B52] flex items-center justify-center overflow-hidden">
+              {siteConfig.logo ? (
+                <img src={siteConfig.logo} alt={siteConfig.shortName} className="w-full h-full object-cover" />
+              ) : (
+                <span className="font-serif text-xl text-[#1A1A1A]">{siteConfig.shortName}</span>
+              )}
             </div>
             <span className="font-serif text-xl">{siteConfig.name}</span>
           </Link>

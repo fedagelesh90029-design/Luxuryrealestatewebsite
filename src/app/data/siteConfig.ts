@@ -1,9 +1,10 @@
 export const siteConfig = {
   name: 'БЕЛ-СТРОЙ',
   shortName: 'БС',
+  logo: '/images/logo.png',
   contact: {
-    phone: '+7 (951) 844-83-53',
-    phoneRaw: '+79518448353',
+    phone: '+7 (988) 417-77-67',
+    phoneRaw: '+79884177767',
     email: 'SKORKINA.MARI@INBOX.RU',
     address: 'г. Сочи, ул. Ивановская, д. 2/60',
     fullAddress: '354393, Краснодарский край, г Сочи, Адлерский р-н, село Высокое, ул Ивановская, д 2/60, кв 16',
