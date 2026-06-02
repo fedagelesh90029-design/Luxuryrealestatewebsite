@@ -42,6 +42,29 @@ export function Admin() {
   const [editingService, setEditingService] = useState<WorkItem | null>(null);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
 
+  // Form states
+  const [newService, setNewService] = useState<Omit<WorkItem, 'id'>>({
+    name: '',
+    unit: 'м²',
+    price: 0,
+    category: categories[0]?.slug || '',
+    isActive: true,
+    description: ''
+  });
+
+  const [newProject, setNewProject] = useState<Omit<Project, 'id'>>({
+    title: '',
+    category: 'residential',
+    location: '',
+    area: '',
+    year: new Date().getFullYear().toString(),
+    image: '',
+    description: ''
+  });
+
+  const [newCatName, setNewCatName] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (login === 'belstroy' && password === 'belstroy') {
@@ -91,29 +114,6 @@ export function Admin() {
       </div>
     );
   }
-
-  // Form states
-  const [newService, setNewService] = useState<Omit<WorkItem, 'id'>>({
-    name: '',
-    unit: 'м²',
-    price: 0,
-    category: categories[0]?.slug || '',
-    isActive: true,
-    description: ''
-  });
-
-  const [newProject, setNewProject] = useState<Omit<Project, 'id'>>({
-    title: '',
-    category: 'residential',
-    location: '',
-    area: '',
-    year: new Date().getFullYear().toString(),
-    image: '',
-    description: ''
-  });
-
-  const [newCatName, setNewCatName] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
 
   const menuItems = [
     { id: 'requests' as View, label: 'Заявки', icon: FileText },
