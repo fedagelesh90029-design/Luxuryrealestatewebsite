@@ -239,11 +239,13 @@ export function Admin() {
       <aside className="w-64 bg-[#1A1A1A] text-[#F5F5F0] p-6 flex flex-col">
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-[#B58B52] flex items-center justify-center overflow-hidden">
+            <div className="w-10 h-10 flex items-center justify-center overflow-hidden">
               {siteConfig.logo ? (
                 <img src={siteConfig.logo} alt={siteConfig.shortName} className="w-full h-full object-cover" />
               ) : (
-                <span className="font-serif text-xl text-[#1A1A1A]">{siteConfig.shortName}</span>
+                <div className="w-full h-full bg-[#B58B52] flex items-center justify-center">
+                  <span className="font-serif text-xl text-[#1A1A1A]">{siteConfig.shortName}</span>
+                </div>
               )}
             </div>
             <span className="font-serif text-xl">{siteConfig.name}</span>
