@@ -59,6 +59,7 @@ export function Admin() {
     area: '',
     year: new Date().getFullYear().toString(),
     image: '',
+    images: [],
     description: ''
   });
 
@@ -165,13 +166,11 @@ export function Admin() {
       addProject(newProject);
     }
     setShowAddProject(false);
-    setNewProject({ title: '', category: 'residential', location: '', area: '', year: '2026', image: '', description: '' });
+    setNewProject({ title: '', category: 'residential', location: '', area: '', year: '2026', image: '', images: [], description: '' });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setIsUploading(true);
+  const processFile = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const img = new Image();
@@ -199,14 +198,28 @@ export function Admin() {
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, width, height);
-          
-          // Compress to JPEG with 0.7 quality
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-          setNewProject(prev => ({ ...prev, image: compressedBase64 }));
-          setIsUploading(false);
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
         };
       };
       reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setIsUploading(true);
+      const processedImages = await Promise.all(files.map(file => processFile(file)));
+      
+      setNewProject(prev => {
+        const allImages = [...(prev.images || []), ...processedImages];
+        return {
+          ...prev,
+          image: prev.image || processedImages[0],
+          images: allImages
+        };
+      });
+      setIsUploading(false);
     }
   };
 
@@ -219,6 +232,7 @@ export function Admin() {
       area: project.area,
       year: project.year,
       image: project.image,
+      images: project.images || [],
       description: project.description
     });
     setShowAddProject(true);

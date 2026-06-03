@@ -69,12 +69,17 @@ export function Portfolio() {
                   onClick={() => setSelectedProject(project)}
                   className="bg-white cursor-pointer group overflow-hidden"
                 >
-                  <div className="overflow-hidden">
+                  <div className="overflow-hidden relative">
                     <ImageWithFallback
                       src={project.image}
                       alt={project.title}
                       className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
                     />
+                    {project.images && project.images.length > 1 && (
+                      <div className="absolute bottom-4 right-4 bg-white/90 px-3 py-1 text-[10px] uppercase tracking-widest font-bold">
+                        {project.images.length} Фото
+                      </div>
+                    )}
                   </div>
                   <div className="p-6">
                     <h3 className="mb-2">{project.title}</h3>
@@ -97,42 +102,71 @@ export function Portfolio() {
           onClick={() => setSelectedProject(null)}
         >
           <div
-            className="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white max-w-5xl w-full max-h-[95vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div 
-              className="relative overflow-hidden bg-[#1A1A1A]" 
-              style={{ height: '50vh', minHeight: '300px' }}
-            >
+            <div className="relative">
               <button
                 onClick={() => setSelectedProject(null)}
-                className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 flex items-center justify-center hover:bg-white transition-colors"
+                className="absolute top-6 right-6 z-20 w-12 h-12 bg-white flex items-center justify-center hover:bg-[#B58B52] hover:text-white transition-all shadow-xl"
               >
                 <X className="w-6 h-6" />
               </button>
-              <ImageWithFallback
-                src={selectedProject.image}
-                alt={selectedProject.title}
-                className="w-full h-full object-cover object-center"
-              />
+
+              {/* Gallery */}
+              <div className="bg-[#1A1A1A]">
+                {selectedProject.images && selectedProject.images.length > 0 ? (
+                  <div className="space-y-4 p-4 lg:p-8">
+                    {selectedProject.images.map((img, idx) => (
+                      <div key={idx} className="w-full">
+                        <ImageWithFallback
+                          src={img}
+                          alt={`${selectedProject.title} - ${idx + 1}`}
+                          className="w-full h-auto object-contain max-h-[80vh] mx-auto shadow-2xl"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="h-[60vh] min-h-[400px]">
+                    <ImageWithFallback
+                      src={selectedProject.image}
+                      alt={selectedProject.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="p-12">
-              <h2 className="mb-4">{selectedProject.title}</h2>
-              <div className="grid grid-cols-3 gap-6 mb-6 pb-6 border-b border-[#1A1A1A]/10">
-                <div>
-                  <div className="text-sm text-[#1A1A1A]/60 mb-1">Локация</div>
-                  <div>{selectedProject.location}</div>
+
+            <div className="p-12 lg:p-20 bg-white">
+              <div className="max-w-3xl">
+                <div className="text-[#B58B52] text-xs uppercase tracking-[0.3em] font-bold mb-4">
+                  {filters.find(f => f.value === selectedProject.category)?.label}
                 </div>
-                <div>
-                  <div className="text-sm text-[#1A1A1A]/60 mb-1">Площадь</div>
-                  <div>{selectedProject.area}</div>
+                <h2 className="text-4xl lg:text-5xl mb-12 font-serif leading-tight">{selectedProject.title}</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16 py-10 border-y border-[#1A1A1A]/10">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-[#1A1A1A]/40 mb-3 font-bold">Локация</div>
+                    <div className="text-lg">{selectedProject.location}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-[#1A1A1A]/40 mb-3 font-bold">Площадь</div>
+                    <div className="text-lg">{selectedProject.area}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-[#1A1A1A]/40 mb-3 font-bold">Год реализации</div>
+                    <div className="text-lg">{selectedProject.year}</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-sm text-[#1A1A1A]/60 mb-1">Год</div>
-                  <div>{selectedProject.year}</div>
+
+                <div className="prose prose-lg max-w-none">
+                  <p className="text-[#1A1A1A]/70 text-xl leading-relaxed whitespace-pre-line">
+                    {selectedProject.description}
+                  </p>
                 </div>
               </div>
-              <p className="text-[#1A1A1A]/70">{selectedProject.description}</p>
             </div>
           </div>
         </div>

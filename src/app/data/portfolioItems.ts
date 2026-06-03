@@ -6,6 +6,7 @@ export interface Project {
   area: string;
   year: string;
   image: string;
+  images?: string[];
   description: string;
 }
 
