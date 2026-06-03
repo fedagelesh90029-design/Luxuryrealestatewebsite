@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: 'БЕЛ-СТРОЙ',
   shortName: 'БС',
-  logo: '/images/logo.png',
+  logo: '/images/logo.svg',
   contact: {
     phone: '+7 (988) 417-77-67',
     phoneRaw: '+79884177767',
