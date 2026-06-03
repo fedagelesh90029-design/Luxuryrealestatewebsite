@@ -458,7 +458,7 @@ export function Admin() {
               <h2>Управление портфолио</h2>
               <Button variant="primary" className="flex items-center gap-2" onClick={() => {
                 setEditingProject(null);
-                setNewProject({ title: '', category: 'residential', location: '', area: '', year: '2026', image: '', description: '' });
+                setNewProject({ title: '', category: 'residential', location: '', area: '', year: new Date().getFullYear().toString(), image: '', images: [], description: '' });
                 setShowAddProject(true);
               }}>
                 <Plus className="w-4 h-4" />
@@ -675,44 +675,83 @@ export function Admin() {
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-4">
-                <div className="border-2 border-dashed border-[#1A1A1A]/10 p-4 text-center">
+                <div className="border-2 border-dashed border-[#1A1A1A]/10 p-4">
                   {isUploading ? (
                     <div className="py-8 flex flex-col items-center gap-2">
                       <div className="w-8 h-8 border-4 border-[#B58B52] border-t-transparent rounded-full animate-spin"></div>
                       <p className="text-xs opacity-50">Сжатие фото...</p>
                     </div>
-                  ) : newProject.image ? (
-                    <div className="relative group inline-block">
-                      <img src={newProject.image} alt="Preview" className="max-h-48 mx-auto" />
-                      <button 
-                        type="button"
-                        onClick={() => setNewProject(prev => ({ ...prev, image: '' }))}
-                        className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
+                  ) : newProject.images && newProject.images.length > 0 ? (
+                    <div className="grid grid-cols-4 gap-2">
+                      {newProject.images.map((img, idx) => (
+                        <div key={idx} className="relative group aspect-square">
+                          <img src={img} alt={`Preview ${idx}`} className="w-full h-full object-cover rounded" />
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              const updatedImages = newProject.images?.filter((_, i) => i !== idx);
+                              setNewProject(prev => ({ 
+                                ...prev, 
+                                images: updatedImages,
+                                image: prev.image === img ? (updatedImages?.[0] || '') : prev.image
+                              }));
+                            }}
+                            className="absolute top-1 right-1 bg-red-600 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                          {newProject.image === img && (
+                            <div className="absolute bottom-0 left-0 right-0 bg-[#B58B52] text-white text-[8px] py-0.5 text-center font-bold">
+                              ОБЛОЖКА
+                            </div>
+                          )}
+                          {newProject.image !== img && (
+                            <button
+                              type="button"
+                              onClick={() => setNewProject(prev => ({ ...prev, image: img }))}
+                              className="absolute inset-0 bg-black/40 text-white text-[8px] opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                            >
+                              Сделать обложкой
+                            </button>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   ) : (
-                    <div className="py-8">
+                    <div className="py-8 text-center">
                       <ImageIcon className="w-12 h-12 mx-auto mb-2 opacity-10" />
-                      <p className="text-xs opacity-40">Выберите файл или вставьте ссылку ниже</p>
+                      <p className="text-xs opacity-40">Выберите файлы или вставьте ссылки ниже</p>
                     </div>
                   )}
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Загрузить файл</label>
-                    <input type="file" accept="image/*" onChange={handleFileChange} className="w-full text-xs" />
+                    <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Загрузить файлы (можно несколько)</label>
+                    <input type="file" accept="image/*" multiple onChange={handleFileChange} className="w-full text-xs" />
                   </div>
                   <div>
-                    <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">URL или Data-строка</label>
-                    <textarea 
-                      className="w-full border border-[#1A1A1A]/10 p-2 h-10 focus:border-[#B58B52] outline-none resize-none text-[8px] font-mono break-all" 
-                      value={newProject.image} 
-                      onChange={e => setNewProject({...newProject, image: e.target.value})} 
-                      placeholder="https://... или data:image/..." 
-                    />
+                    <label className="block text-[10px] uppercase tracking-widest opacity-40 mb-1">Добавить URL изображения</label>
+                    <div className="flex gap-2">
+                      <input 
+                        className="flex-1 border border-[#1A1A1A]/10 p-2 h-10 focus:border-[#B58B52] outline-none text-[10px]" 
+                        placeholder="https://..." 
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            const val = (e.target as HTMLInputElement).value;
+                            if (val) {
+                              setNewProject(prev => ({
+                                ...prev,
+                                image: prev.image || val,
+                                images: [...(prev.images || []), val]
+                              }));
+                              (e.target as HTMLInputElement).value = '';
+                            }
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
